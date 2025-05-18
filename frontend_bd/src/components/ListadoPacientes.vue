@@ -1,0 +1,3 @@
+<template>
+  Pacientes
+</template>
