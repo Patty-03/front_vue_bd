@@ -5,12 +5,13 @@ import ListadoPacientes from '../components/ListadoPacientes.vue'
 import ListadoMedicos from '@/components/ListadoMedicos.vue'
 import ResumenHospitales from '@/components/ResumenHospitales.vue'
 import InformesConsultas from '@/components/InformesConsultas.vue'
+import UserDialog from '@/components/modals/UserDialog.vue'
 
 const { mobile } = useDisplay()
 const drawer = ref(true)
 const rail = ref(false)
+const openUserDialog = ref(false)
 
-// Estado para controlar si estamos en móvil
 const isMobile = ref(mobile.value)
 
 function updateMobile() {
@@ -51,7 +52,7 @@ const currentViewTitle = computed(() => {
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-if="!isMobile"></v-app-bar-nav-icon>
       <v-app-bar-title>{{ currentViewTitle }}</v-app-bar-title>
       <v-spacer></v-spacer>
-      <v-btn icon="mdi-account-circle"></v-btn>
+      <v-btn icon="mdi-account-circle" @click="openUserDialog = true"></v-btn>
     </v-app-bar>
 
     <!-- Navigation Drawer para desktop -->
@@ -85,11 +86,12 @@ const currentViewTitle = computed(() => {
 
     <!-- Main content -->
     <v-main>
-      <v-container fluid>
+      <v-container fluid class="mt-8">
         <component :is="currentView" />
       </v-container>
     </v-main>
-
+    
+    <UserDialog v-model="openUserDialog"></UserDialog>
     <!-- Bottom Navigation para móvil -->
     <v-bottom-navigation
       v-if="isMobile"
