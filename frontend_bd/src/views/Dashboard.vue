@@ -1,11 +1,16 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useDisplay } from 'vuetify'
-import ListadoPacientes from '@/components/tables/ListadoPacientes.vue'
-import ListadoMedicos from '@/components/ListadoMedicos.vue'
-import ResumenHospitales from '@/components/ResumenHospitales.vue'
-import InformesConsultas from '@/components/InformesConsultas.vue'
 import UserDialog from '@/components/modals/UserDialog.vue'
+import HptalesMasDeCien from '@/components/tables/HptalesMasDeCien.vue'
+import InformeConsultas from '@/components/tables/InformeConsultas.vue'
+import ListadoMedicos from '@/components/ListadoMedicos.vue'
+import ListadoPacientes from '@/components/tables/ListadoPacientes.vue'
+import PacientesNoAtendidos from '@/components/tables/PacientesNoAtendidos.vue'
+import ResumenHptales from '@/components/tables/ResumenHptales.vue'
+import ResumenProceso from '@/components/tables/ResumenProceso.vue'
+import UnidadesRevisarTurnos from '@/components/tables/UnidadesRevisarTurnos.vue'
+
 
 const { mobile } = useDisplay()
 const drawer = ref(true)
@@ -33,13 +38,13 @@ onBeforeUnmount(() => {
 
 const menuItems = ref([
   { title: 'Listado Pacientes', icon: 'mdi-account-group', component: ListadoPacientes },
-  { title: 'Listado Medicos', icon: 'mdi-doctor', component: ListadoMedicos },
-  { title: 'Resumen por Hospitales', icon: 'mdi-hospital', component: ResumenHospitales },
-  { title: 'Reporte Hospitales', icon: 'mdi-hospital-building', component: InformesConsultas },
-  { title: 'Informe Consultas', icon: 'mdi-clipboard-text', component: InformesConsultas },
-  { title: 'Pacientes no Atendidos', icon: 'mdi-account-group-outline', component: InformesConsultas },
-  { title: 'Resumen del Proceso', icon: 'mdi-pencil', component: InformesConsultas },
-  { title: 'Unidades por revisar', icon: 'mdi-clock', component: InformesConsultas }
+  { title: 'Listado Médicos', icon: 'mdi-doctor', component: ListadoMedicos },
+  { title: 'Resumen por Hospitales', icon: 'mdi-hospital', component: ResumenHptales },
+  { title: 'Reporte Hospitales', icon: 'mdi-hospital-building', component: HptalesMasDeCien },
+  { title: 'Informe Consultas', icon: 'mdi-clipboard-text', component: InformeConsultas },
+  { title: 'Pacientes no Atendidos', icon: 'mdi-account-group-outline', component: PacientesNoAtendidos },
+  { title: 'Resumen del Proceso', icon: 'mdi-pencil', component: ResumenProceso },
+  { title: 'Unidades por revisar', icon: 'mdi-clock', component: UnidadesRevisarTurnos }
 ])
 
 const currentView = ref(ListadoPacientes)
@@ -87,7 +92,7 @@ const currentViewTitle = computed(() => {
     <v-bottom-navigation v-if="isMobile" v-model="currentView" grow class="mobile-nav">
       <v-btn v-for="item in menuItems" :key="item.title" :value="item.component">
         <v-icon :icon="item.icon"></v-icon>
-        <span>{{ item.title }}</span>
+        <!--Poner tooltip aqui con los nombres de los botones (vTooltip)-->
       </v-btn>
     </v-bottom-navigation>
   </v-app>

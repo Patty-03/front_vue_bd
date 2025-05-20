@@ -9,7 +9,6 @@
                 </v-alert>
             </div>
 
-
             <v-card-actions class="d-flex flex-row justify-space-around">
                 <v-btn color="success" variant="elevated">Cerrar Sesion</v-btn>
                 <v-btn color="error" @click="$emit('update:modelValue', false)">Cancelar</v-btn>

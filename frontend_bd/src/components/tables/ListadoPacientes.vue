@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue';
-import TablaGenerica from './TablaGenerica.vue';
 
 const headers = ref([
     "Nombre Hospital",
@@ -20,5 +19,6 @@ const addPatient = ref(false)
 </script>
 
 <template>
-<h2>Listado Pacientes</h2>
+<h1>Listado Pacientes</h1>
+
 </template>
