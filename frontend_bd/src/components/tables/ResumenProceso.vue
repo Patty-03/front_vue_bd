@@ -1,6 +1,12 @@
 <!-- views/reportes/ConsultasExitosas.vue -->
 <script setup>
 import { ref, onMounted } from 'vue'
+import { exportToPDF } from '@/utils/exportToPDF'
+function exportarAPDF() {
+  const headers = ['Hospital', 'Departamento', 'Unidad', 'Turno', 'Hora', 'Inicio', 'Atendidos', '% Atendidos', 'Alta']
+  const columns = ['hospitalp', 'departamentop', 'unidadp', 'num_Turno', 'hora_informe', 'pacientes_inicio', 'pacientes_atendidos', 'porcentaje_atendidos', 'pacientes_alta']
+  exportToPDF(data.value, headers, columns, 'resumen_proceso', 'Resumen del Proceso')
+}
 
 const data = ref([])
 
@@ -26,7 +32,7 @@ onMounted(() => {
 <template>
   <v-container class="d-flex flex-row align-center justify-start">
     <h1>Resumen del proceso</h1>
-    <v-btn color="error" icon size="x-small" class="ml-2">
+    <v-btn color="error" icon size="x-small" class="ml-2" @click="exportarAPDF">
       <v-icon>mdi-file-pdf-box</v-icon>
     </v-btn>
   </v-container>

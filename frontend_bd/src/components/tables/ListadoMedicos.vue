@@ -2,6 +2,27 @@
 import { ref, onMounted } from 'vue'
 import MedicoDialog from '@/components/modals/MedicoDialog.vue'
 import { getAllMedicos, deleteMedico } from '@/functions.js'
+import { exportToPDF } from '@/utils/exportToPDF'
+
+function exportarAPDF() {
+  const headersPDF = [
+    'Cod. Médico', 'Nombre', 'Esp.', 'Licencia', 'Teléfono', 'Años Exp.', 'Contacto',
+    'Unidad', 'Dpto.', 'Hospital'
+  ]
+
+  const columnsPDF = [
+    'cod_medico', 'nombre_completo', 'especialidad', 'licencia', 'telefono',
+    'anios_experiencia', 'contacto', 'unidad', 'departamento', 'hospital'
+  ]
+
+  exportToPDF(
+    data.value,
+    headersPDF,
+    columnsPDF,
+    'medicos_lista',
+    'Listado de Médicos'
+  )
+}
 
 // Datos reactivos
 const data = ref([])
@@ -67,13 +88,13 @@ onMounted(() => {
     <v-btn color="success" icon size="x-small" class="ml-2" @click="abrirModalAgregar">
       <v-icon>mdi-plus</v-icon>
     </v-btn>
-    <v-btn color="error" icon size="x-small" class="ml-2">
+    <v-btn color="error" icon size="x-small" class="ml-2" @click="exportarAPDF">
       <v-icon>mdi-file-pdf-box</v-icon>
     </v-btn>
   </v-container>
 
   <h2 v-if="data.length == 0">No hay contenido para mostrar</h2>
-  <v-container fluid width="80vw" v-else>
+  <v-container fluid width="90vw" v-else>
     <v-table fixed-header height="400px">
       <thead>
         <tr>

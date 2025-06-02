@@ -1,6 +1,12 @@
 <!-- views/reportes/ConsultasExitosas.vue -->
 <script setup>
 import { ref, onMounted } from 'vue'
+import { exportToPDF } from '@/utils/exportToPDF'
+function exportarAPDF() {
+  const headers = ['Hospital', 'Departamento', 'Unidad', 'Turno', 'Médico', 'Atendidos', 'Asignados', '% Atendidos']
+  const columns = ['hospitalp', 'departamentop', 'unidadp', 'num_Turno', 'medicop', 'cant_Pacientes_Atendidos', 'cant_Pacientes_Asignados', 'porcentaje_atendidos']
+  exportToPDF(data.value, headers, columns, 'consultas_exitosas', 'Consultas Exitosas')
+}
 
 const data = ref([])
 
@@ -18,6 +24,7 @@ async function cargarDatos() {
   }
 }
 
+
 onMounted(() => {
   cargarDatos()
 })
@@ -26,7 +33,7 @@ onMounted(() => {
 <template>
   <v-container class="d-flex flex-row align-center justify-start">
     <h1>Consultas exitosas</h1>
-    <v-btn color="error" icon size="x-small" class="ml-2">
+    <v-btn color="error" icon size="x-small" class="ml-2" @click="exportarAPDF">
       <v-icon>mdi-file-pdf-box</v-icon>
     </v-btn>
   </v-container>
