@@ -7,14 +7,14 @@ const data = ref([])
 // Cargar datos desde backend
 async function cargarDatos() {
   try {
-    const response = await fetch('http://localhost:8080/api/reportes/getInformeConsultas')
+    const response = await fetch('http://localhost:8080/api/reportes/getPacientesNoAtendidos')
     if (!response.ok) throw new Error('Error al cargar datos')
 
     const jsonData = await response.json()
-    data.value = jsonData.informes || []
+    data.value = jsonData.pacientes || []
   } catch (err) {
     console.error(err)
-    alert('No se pudo cargar el resumen por hospitales')
+    alert('No se pudieron cargar los datos')
   }
 }
 
@@ -25,7 +25,7 @@ onMounted(() => {
 
 <template>
   <v-container class="d-flex flex-row align-center justify-start">
-    <h1>Informes durante las consultas</h1>
+    <h1>Pacientes por Unidad</h1>
     <v-btn color="error" icon size="x-small" class="ml-2">
       <v-icon>mdi-file-pdf-box</v-icon>
     </v-btn>
@@ -40,13 +40,10 @@ onMounted(() => {
               'Hospital',
               'Departamento',
               'Unidad',
-              'Turno',
-              'Hora',
-              'No.',
-              'Pacientes al inicio',
-              'Pacientes admitidos',
-              'Dados de alta',
-              'Pacientes atendidos'
+              'Hist.Clinica',
+              'Nombre',
+              'Fecha de Nacimiento',
+              'Direccion'
             ]"
             :key="header"
           >
@@ -60,16 +57,13 @@ onMounted(() => {
           :key="idx"
           class="hover:bg-blue-lighten-5 transition-colors duration-200"
         >
-          <td>{{ item.hospitalp }}</td>
-          <td>{{ item.departamentop }}</td>
-          <td>{{ item.unidadp }}</td>
-          <td>{{ item.num_Turno }}</td>
-          <td>{{ item.hora_informep }}</td>
-          <td>{{ item.numero_informep }}</td>
-          <td>{{ item.pacientes_iniciop }}</td>
-          <td>{{ item.pacientes_admitidosp }}</td>
-          <td>{{ item.pacientes_altap }}</td>
-          <td>{{ item.pacientes_atendidosp }}</td>
+          <td>{{ item.hospital }}</td>
+          <td>{{ item.departamento }}</td>
+          <td>{{ item.unidad }}</td>
+          <td>{{ item.id_paciente }}</td>
+          <td>{{ item.paciente }}</td>
+          <td>{{ item.fecha_nacido }}</td>
+          <td>{{ item.direccion }}</td>
         </tr>
       </tbody>
     </v-table>

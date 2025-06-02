@@ -7,14 +7,14 @@ const data = ref([])
 // Cargar datos desde backend
 async function cargarDatos() {
   try {
-    const response = await fetch('http://localhost:8080/api/reportes/getInformeConsultas')
+    const response = await fetch('http://localhost:8080/api/reportes/getConsultasExitosas')
     if (!response.ok) throw new Error('Error al cargar datos')
 
     const jsonData = await response.json()
-    data.value = jsonData.informes || []
+    data.value = jsonData.consultas || []
   } catch (err) {
     console.error(err)
-    alert('No se pudo cargar el resumen por hospitales')
+    alert('No se pudieron cargar las consultas exitosas')
   }
 }
 
@@ -25,7 +25,7 @@ onMounted(() => {
 
 <template>
   <v-container class="d-flex flex-row align-center justify-start">
-    <h1>Informes durante las consultas</h1>
+    <h1>Consultas exitosas</h1>
     <v-btn color="error" icon size="x-small" class="ml-2">
       <v-icon>mdi-file-pdf-box</v-icon>
     </v-btn>
@@ -41,12 +41,10 @@ onMounted(() => {
               'Departamento',
               'Unidad',
               'Turno',
-              'Hora',
-              'No.',
-              'Pacientes al inicio',
-              'Pacientes admitidos',
-              'Dados de alta',
-              'Pacientes atendidos'
+              'Médico',
+              'Pacientes Atendidos',
+              'Pacientes Asignados',
+              '% Atendidos',
             ]"
             :key="header"
           >
@@ -64,12 +62,10 @@ onMounted(() => {
           <td>{{ item.departamentop }}</td>
           <td>{{ item.unidadp }}</td>
           <td>{{ item.num_Turno }}</td>
-          <td>{{ item.hora_informep }}</td>
-          <td>{{ item.numero_informep }}</td>
-          <td>{{ item.pacientes_iniciop }}</td>
-          <td>{{ item.pacientes_admitidosp }}</td>
-          <td>{{ item.pacientes_altap }}</td>
-          <td>{{ item.pacientes_atendidosp }}</td>
+          <td>{{ item.medicop }}</td>
+          <td>{{ item.cant_Pacientes_Atendidos }}</td>
+          <td>{{ item.cant_Pacientes_Asignados }}</td>
+          <td>{{ item.porcentaje_atendidos.toFixed(2) }}%</td>
         </tr>
       </tbody>
     </v-table>
