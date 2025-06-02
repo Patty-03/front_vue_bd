@@ -11,7 +11,7 @@ async function cargarDatos() {
     if (!response.ok) throw new Error('Error al cargar datos')
 
     const jsonData = await response.json()
-    data.value = jsonData.pacientes || []
+    data.value = jsonData.pacientes_no_atendidos || []
   } catch (err) {
     console.error(err)
     alert('No se pudieron cargar los datos')

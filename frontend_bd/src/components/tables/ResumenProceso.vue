@@ -7,11 +7,11 @@ const data = ref([])
 // Cargar datos desde backend
 async function cargarDatos() {
   try {
-    const response = await fetch('http://localhost:8080/api/reportes/resumenHospitales')
+    const response = await fetch('http://localhost:8080/api/reportes/getResumenProceso')
     if (!response.ok) throw new Error('Error al cargar datos')
 
     const jsonData = await response.json()
-    data.value = jsonData.hospitales || []
+    data.value = jsonData.resumenes || []
   } catch (err) {
     console.error(err)
     alert('No se pudo cargar el resumen por hospitales')

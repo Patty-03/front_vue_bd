@@ -32,7 +32,7 @@ const routes = [
   { path: '/reportes/unidadesRevisarTurnos', component: UnidadesRevision },
   { path: '/reportes/pacientesNoAtendidos', component: PacientesNoAtendidos },
   { path: '/reportes/pacientesPorUnidad', component: PacientesPorUnidad },
-  { path: '/reportes/pacientesPorUnidad', component: InformeConsultas },
+  { path: '/reportes/informesDuranteConsultas', component: InformeConsultas },
   { path: '/reportes/hospitalesMasPacientes', component: HospitalesMasPacientes },
   { path: '/reportes/resumenProceso', component: ResumenProceso },
 ]
