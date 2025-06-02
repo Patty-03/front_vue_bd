@@ -31,8 +31,8 @@ onMounted(() => {
     </v-btn>
   </v-container>
 
-  <v-container fluid width="80vw">
-    <v-table fixed-header height="400px">
+<h2 v-if="data.length == 0">No hay contenido para mostrar</h2>
+  <v-container fluid width="80vw" v-else>    <v-table fixed-header height="400px">
       <thead>
         <tr>
           <th

@@ -6,6 +6,10 @@ import { createPinia } from 'pinia'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import * as pdf from 'jspdf'
+import 'jspdf-autotable'
+
+window.jsPDF = pdf 
 
 import App from './App.vue'
 import router from './router/router'
