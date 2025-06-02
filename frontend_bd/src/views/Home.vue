@@ -77,6 +77,12 @@ const reportes = ref([
     descripcion: 'Resumen de pacientes ordenados por unidad, departamento u hospital.',
     ruta: '/reportes/pacientesPorUnidad',
     icono: 'mdi-account-circle'
+  },
+      {
+    nombre: 'Resumen del Proceso',
+    descripcion: 'Resumen de las consultas realizadas en los hospitales, departamentos o unidades',
+    ruta: '/reportes/resumenProceso',
+    icono: 'mdi-account-circle'
   }
 ])
 </script>

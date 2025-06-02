@@ -10,6 +10,12 @@ import ListadoRegistros from '@/components/tables/ListadoRegistros.vue'
 import ListadoTurnos from '@/components/tables/ListadoTurnos.vue'
 import ConsultasExitosas from '@/components/tables/ConsultasExitosas.vue'
 import ResumenHospitales from '@/components/tables/ResumenHospitales.vue'
+import HospitalesMasPacientes from '@/components/tables/HospitalesMasPacientes.vue'
+import UnidadesRevision from '@/components/tables/UnidadesRevision.vue'
+import PacientesNoAtendidos from '@/components/tables/PacientesNoAtendidos.vue'
+import PacientesPorUnidad from '@/components/tables/PacientesPorUnidad.vue'
+import InformeConsultas from '@/components/tables/InformeConsultas.vue'
+import ResumenProceso from '@/components/tables/ResumenProceso.vue'
 
 const routes = [
   { path: '/', component: Home },
@@ -23,11 +29,12 @@ const routes = [
   { path: '/turnos', component: ListadoTurnos },
   { path: '/reportes/consultasExitosas', component: ConsultasExitosas },
   { path: '/reportes/resumenHospitales', component: ResumenHospitales },
-  /*{ path: '/reportes/resumenProceso', component: ConsultaressExitosas },
-  { path: '/reportes/consultasExitosas', component: ConsultasExitosas },
-  { path: '/reportes/consultasExitosas', component: ConsultasExitosas },
-  { path: '/reportes/consultasExitosas', component: ConsultasExitosas },
-  { path: '/reportes/consultasExitosas', component: ConsultasExitosas },*/
+  { path: '/reportes/unidadesRevisarTurnos', component: UnidadesRevision },
+  { path: '/reportes/pacientesNoAtendidos', component: PacientesNoAtendidos },
+  { path: '/reportes/pacientesPorUnidad', component: PacientesPorUnidad },
+  { path: '/reportes/pacientesPorUnidad', component: InformeConsultas },
+  { path: '/reportes/hospitalesMasPacientes', component: HospitalesMasPacientes },
+  { path: '/reportes/resumenProceso', component: ResumenProceso },
 ]
 
 const router = createRouter({
