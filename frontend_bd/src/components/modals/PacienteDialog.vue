@@ -51,7 +51,7 @@ const creationDialog = ref(false)
 
 async function handleSubmit() {
   const datos = {
-    num_Historia_clinica: num_Historia_Clinica.value,
+    num_Historia_clinica: num_Historia_clinica.value,
     nombre_Paciente: nombre_Paciente.value,
     direccion_Paciente: direccion_Paciente.value,
     fecha_Nacimiento: fecha_Nacimiento.value,
@@ -79,7 +79,7 @@ async function handleSubmit() {
             <v-col cols="12" sm="6">
               <v-text-field
                 label="No. Historia Clínica"
-                v-model.number="num_Historia_Clinica"
+                v-model.number="num_Historia_clinica"
                 required
               />
             </v-col>

@@ -16,24 +16,23 @@ export async function getPacientes() {
 }
 
 export async function createPaciente(paciente) {
-  alert(paciente.num_Historia_clinica)
   const formData = new URLSearchParams()
   formData.append('num_Historia_clinica', paciente.num_Historia_clinica)
   formData.append('nombre_Paciente', paciente.nombre_Paciente)
-  formData.append('direccion_Paciente', paciente.direccion_Paciente)
+  formData.append('direccion_Paciente', paciente.direccion_Paciente || '')
   formData.append('fecha_Nacimiento', paciente.fecha_Nacimiento)
-
+  
   try {
     const response = await axios.post(
       'http://localhost:8080/api/pacientes/create',
       formData.toString(),
       {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/x-www-form-urlencoded'
         },
-      },
+      }
     )
-    return response.statusText + response.status + response.data
+    return response.data
   } catch (error) {
     console.error('Error al crear paciente:', error.response?.data || error.message)
     throw error
@@ -94,7 +93,7 @@ export async function updatePaciente(historia, paciente) {
   }
 }
 
-//MEDICO
+//----------------------------------------------------------------MEDICO
 export async function getAllMedicos() {
   try {
     const response = await axios.get(`http://localhost:8080/api/medicos/getAll`, {
@@ -164,17 +163,19 @@ export async function createMedico(medico) {
   const formData = new URLSearchParams()
   formData.append('cod_Med', medico.cod_Med)
   formData.append('nombre_Med', medico.nombre_Med)
-  formData.append('apellidos', medico.apellidos)
+  formData.append('Apellidos', medico.Apellidos)
   formData.append('especialidad', medico.especialidad)
   formData.append('num_Licencia', medico.num_Licencia)
   formData.append('telefono', medico.telefono)
   formData.append('anios_Expmed', medico.anios_Expmed)
   formData.append('datos_Contacto', medico.datos_Contacto)
   formData.append('cod_Unidad', medico.cod_Unidad)
+  formData.append('cod_Dpto', medico.cod_Dpto)
+  formData.append('cod_Hptal', medico.cod_Hptal)
 
-  const response = await axios.post(API_URL, formData.toString(), {
+  const response = await axios.post('http://localhost:8080/api/medicos/create', formData.toString(), {
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/x-www-form-urlencoded'
     },
   })
 
@@ -344,24 +345,25 @@ export async function getAllRegistros() {
 }
 
 export async function createRegistro(registro) {
+  try {
   const formData = new URLSearchParams()
   formData.append('num_Historia_Clinica', registro.num_Historia_Clinica)
   formData.append('cod_Unidad', registro.cod_Unidad)
-  formData.append('fue_Atendido', registro.fue_Atendido)
-  if (!registro.fue_Atendido && registro.causa_No_Atendido) {
-    formData.append('causa_No_Atendido', registro.causa_No_Atendido)
-  }
+  formData.append('fue_Atendido', registro.fue_Atendido ? 'true' : 'false')
+  formData.append('causa_No_Atendido', registro.causa_No_Atendido || '')
+  formData.append('estado', registro.estado)
+  formData.append('fecha_Registro', registro.fecha_Registro)
 
-  try {
-    const response = await axios.post(`http://localhost:8080/api/registro/create`, formData.toString(), {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-    })
-    return response.data
-  } catch (error) {
-    console.error('Error al crear registro:', error.response?.data || error.message)
-    throw error
+  const response = await axios.post('http://localhost:8080/api/registro/create', formData.toString(), {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  })
+
+  return response.data
+  } catch (err) {
+    console.error('Error al crear médico:', err.response?.data || err.message)
+    throw new Error(`No se pudo crear el médico: ${err.message}`)
   }
 }
 

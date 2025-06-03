@@ -1,28 +1,9 @@
+<!-- views/Medico/ListadoMedicos.vue -->
 <script setup>
 import { ref, onMounted } from 'vue'
 import MedicoDialog from '@/components/modals/MedicoDialog.vue'
-import { getAllMedicos, deleteMedico } from '@/functions.js'
-import { exportToPDF } from '@/utils/exportToPDF'
-
-function exportarAPDF() {
-  const headersPDF = [
-    'Cod. Médico', 'Nombre', 'Esp.', 'Licencia', 'Teléfono', 'Años Exp.', 'Contacto',
-    'Unidad', 'Dpto.', 'Hospital'
-  ]
-
-  const columnsPDF = [
-    'cod_medico', 'nombre_completo', 'especialidad', 'licencia', 'telefono',
-    'anios_experiencia', 'contacto', 'unidad', 'departamento', 'hospital'
-  ]
-
-  exportToPDF(
-    data.value,
-    headersPDF,
-    columnsPDF,
-    'medicos_lista',
-    'Listado de Médicos'
-  )
-}
+import { getAllMedicos, deleteMedico, createMedico } from '@/functions.js'
+import { exportToPDF } from '@/utils/exportToPDF.js'
 
 // Datos reactivos
 const data = ref([])
@@ -56,7 +37,7 @@ async function cargarDatos() {
     contacto: m.datos_Contacto,
     unidad: m.cod_Unidad,
     departamento: m.cod_Dpto,
-    hospital: m.cod_Hosp
+    hospital: m.cod_Hptal
   }))
 }
 
@@ -70,11 +51,29 @@ function editarMedico(medico) {
   openCreateDialog.value = true
 }
 
-async function handleDelete(codMed) {
+async function handleDelete(codMedico) {
   if (confirm('¿Estás seguro de eliminar este médico?')) {
-    await deleteMedico(codMed)
-    await cargarDatos()
+    try {
+      await deleteMedico(codMedico)
+      await cargarDatos()
+    } catch (err) {
+      alert(`❌ Error al eliminar: ${err.message}`)
+    }
   }
+}
+
+// Exportar a PDF
+function exportarAPDF() {
+  const headersPDF = [
+    'Cod. Médico', 'Nombre', 'Esp.', 'Licencia', 'Teléfono',
+    'Años Exp.', 'Contacto', 'Unidad', 'Dpto.', 'Hospital'
+  ]
+  const columnsPDF = [
+    'cod_medico', 'nombre_completo', 'especialidad', 'licencia',
+    'telefono', 'anios_experiencia', 'contacto', 'unidad', 'departamento', 'hospital'
+  ]
+
+  exportToPDF(data.value, headersPDF, columnsPDF, 'medicos_lista', 'Listado de Médicos')
 }
 
 onMounted(() => {
@@ -93,7 +92,8 @@ onMounted(() => {
     </v-btn>
   </v-container>
 
-  <h2 v-if="data.length == 0">No hay contenido para mostrar</h2>
+  <h2 v-if="data.length == 0">No hay médicos registrados</h2>
+
   <v-container fluid width="90vw" v-else>
     <v-table fixed-header height="400px">
       <thead>
@@ -114,10 +114,10 @@ onMounted(() => {
           <td>{{ item.departamento }}</td>
           <td>{{ item.hospital }}</td>
           <td class="d-flex justify-end" style="gap: 8px;">
-            <v-btn icon size="x-small" color="primary" @click="editarMedico(item)">
+            <v-btn icon size="x-small" color="primary" title="Editar" @click="editarMedico(item)">
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
-            <v-btn icon size="x-small" color="red" @click="handleDelete(item.cod_medico)">
+            <v-btn icon size="x-small" color="red" title="Eliminar" @click="handleDelete(item.cod_medico)">
               <v-icon>mdi-delete</v-icon>
             </v-btn>
           </td>
@@ -126,12 +126,12 @@ onMounted(() => {
     </v-table>
   </v-container>
 
-  <!-- Modal para agregar/editar -->
+  <!-- Modal para crear/editar -->
   <MedicoDialog
-    v-model="openCreateDialog"
-    :medico="selectedMedico"
-    @submit="cargarDatos"
-  />
+  v-model="openCreateDialog"
+  :medico="selectedMedico"
+  @submit="cargarDatos"
+/>
 </template>
 
 <style scoped>

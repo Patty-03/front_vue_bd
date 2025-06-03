@@ -1,11 +1,20 @@
 <script setup>
 import { defineProps, defineEmits, ref, watch } from 'vue'
+import {createMedico} from '@/functions.js'
 
+// Definición de props
 const props = defineProps({
-  modelValue: Boolean,
-  medico: Object
+  modelValue: {
+    type: Boolean,
+    required: true
+  },
+  medico: {
+    type: Object,
+    default: null
+  }
 })
 
+// Emits
 const emit = defineEmits(['update:modelValue', 'submit'])
 
 // Campos reactivos del formulario
@@ -19,10 +28,10 @@ const anios_Expmed = ref(0)
 const datos_Contacto = ref('')
 const cod_Unidad = ref(0)
 
-// ✅ Variable faltante
 const isEdit = ref(false)
+const creationDialog = ref(false)
 
-// Cargar datos si viene un médico
+// Cargar datos si estamos editando
 watch(() => props.medico, (nuevo) => {
   if (nuevo) {
     cod_Med.value = nuevo.cod_med
@@ -34,7 +43,7 @@ watch(() => props.medico, (nuevo) => {
     anios_Expmed.value = nuevo.anios_Expmed
     datos_Contacto.value = nuevo.datos_Contacto
     cod_Unidad.value = nuevo.cod_Unidad
-    isEdit.value = true // ✅ Ahora sí funciona
+    isEdit.value = true
   } else {
     limpiarFormulario()
     isEdit.value = false
@@ -54,6 +63,12 @@ function limpiarFormulario() {
 }
 
 async function handleSubmit() {
+  // Validaciones básicas
+  if (!cod_Med.value || !nombre_Med.value.trim() || !especialidad.value.trim()) {
+    alert('Completa los campos obligatorios')
+    return
+  }
+
   const datos = {
     cod_Med: cod_Med.value,
     nombre_Med: nombre_Med.value,
@@ -66,8 +81,20 @@ async function handleSubmit() {
     cod_Unidad: cod_Unidad.value
   }
 
-  emit('submit', datos)
-  emit('update:modelValue', false)
+  try {
+    if (isEdit.value) {
+      await updateMedico(datos.cod_Med, datos)
+    } else {
+      await createMedico(datos)
+    }
+
+    emit('submit')
+    emit('update:modelValue', false)
+    creationDialog.value = true
+  } catch (err) {
+    console.error(err)
+    alert(`❌ Error al guardar: ${err.message}`)
+  }
 }
 </script>
 
@@ -121,7 +148,8 @@ async function handleSubmit() {
     </v-card>
   </v-dialog>
 
-  <v-dialog v-model="creationDialog" max-width="500px" transition="dialog-transition">
+  <!-- Diálogo de éxito -->
+  <v-dialog v-model="creationDialog" max-width="500px">
     <v-card class="pa-4 text-center">
       <v-card-title>{{ isEdit ? 'Médico actualizado' : 'Médico creado' }} con éxito</v-card-title>
       <v-card-actions class="d-flex justify-center mt-4">
