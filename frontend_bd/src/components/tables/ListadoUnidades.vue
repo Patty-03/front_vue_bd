@@ -45,11 +45,6 @@ function editarUnidad(unidad) {
 async function eliminarUnidad(item) {
   if (confirm('¿Estás seguro de eliminar esta unidad?')) {
     try {
-      // Verificar que los códigos sean números válidos
-      if (isNaN(item.cod_Unidad)) throw new Error('Código de unidad inválido')
-      if (isNaN(item.cod_Dpto)) throw new Error('Código de departamento inválido')
-      if (isNaN(item.cod_Hosp)) throw new Error('Código de hospital inválido')
-      
       await deleteUnidad(
         Number(item.cod_Unidad),
         Number(item.cod_Dpto),

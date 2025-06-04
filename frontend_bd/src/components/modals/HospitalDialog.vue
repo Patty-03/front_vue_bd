@@ -56,7 +56,7 @@ async function handleSubmit() {
 
   try {
     if (isEdit.value) {
-      await updateHospital(datos.cod_Hptal, datos)
+      await updateHospital(datos)
     } else {
       await createHospital(datos)
     }

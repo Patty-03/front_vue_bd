@@ -204,7 +204,7 @@ export async function createHospital(hospital) {
   formData.append('cod_Hptal', hospital.cod_Hptal)
   formData.append('nombre_hptal', hospital.nombre_hptal)
 
-  const response = await axios.post(`http://localhost:8080/api/create`, formData.toString(), {
+  const response = await axios.post(`http://localhost:8080/api/hospitales/create`, formData.toString(), {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
@@ -215,10 +215,10 @@ export async function createHospital(hospital) {
 
 export async function updateHospital(hospital) {
   const formData = new URLSearchParams()
-  formData.append('cod_Hptal', hospital.cod_Hptal)
+  formData.append('cod_hptal', hospital.cod_Hptal)
   formData.append('nombre_hptal', hospital.nombre_hptal)
 
-  const response = await axios.put(`http://localhost:8080/api/update`, formData.toString(), {
+  const response = await axios.put(`http://localhost:8080/api/hospitales/update`, formData.toString(), {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
@@ -284,12 +284,12 @@ export async function createUnidad(unidad) {
   const formData = new URLSearchParams()
   formData.append('cod_Unidad', unidad.cod_Unidad)
   formData.append('nombre_Unidad', unidad.nombre_Unidad)
-  formData.append('ubic_Hptal', unidad.ubic_Hptal)
+  formData.append('ubic_Hptal', unidad.ubic_Hptal || '') 
   formData.append('cod_Dpto', unidad.cod_Dpto)
   formData.append('cod_Hosp', unidad.cod_Hosp)
 
   try {
-    const response = await axios.post(`http://localhost:8080/api/unidades`, formData.toString(), {
+    const response = await axios.post(`http://localhost:8080/api/unidades/create`, formData.toString(), {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
@@ -425,19 +425,19 @@ export async function getRegistroByHistoriaUnidad(historia, cod_Unidad) {
 export async function createInforme(informe) {
   const formData = new URLSearchParams()
   formData.append('num_Inf', informe.num_Inf)
-  formData.append('cod_Unidad', informe.cod_Unidad)
-  formData.append('cant_Pacientes_Atendidos', informe.cant_Pacientes_Atendidos)
-  formData.append('cant_Pacientes_Alta', informe.cant_Pacientes_Alta)
-  formData.append('cant_pac_adm', informe.cant_pac_adm)
-  formData.append('cant_Total_Pacientes', informe.cant_Total_Pacientes)
+  formData.append('codUnidad', informe.cod_Unidad)
+  formData.append('cantPacientesAtendidos', informe.cant_Pacientes_Atendidos)
+  formData.append('cantPacientesAlta', informe.cant_Pacientes_Alta)
+  formData.append('cantPacAdm', informe.cant_pac_adm)
+  formData.append('cantTotalPacientes', informe.cant_Total_Pacientes)
   formData.append('num_Turno', informe.num_Turno)
-  formData.append('hora_Inf', informe.hora_Inf)
-  formData.append('fecha_Inf', informe.fecha_Inf)
-  formData.append('cod_Hosp', informe.cod_Hosp)
-  formData.append('cod_Dpto', informe.cod_Dpto)
+  formData.append('horaInf', informe.hora_Inf)
+  formData.append('fechaInf', informe.fecha_Inf)
+  formData.append('codHosp', informe.cod_Hosp)
+  formData.append('codDpto', informe.cod_Dpto)
 
   try {
-    const response = await axios.post(`http://localhost:8080/api/informes`, formData.toString(), {
+    const response = await axios.post(`http://localhost:8080/api/informes/create`, formData.toString(), {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
