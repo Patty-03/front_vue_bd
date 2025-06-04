@@ -9,7 +9,7 @@ const data = ref([])
 
 const headers = ref([
   'Hist. Clínica',
-  'Nombre',
+  'Nombre', 
   'Fecha Nac.',
   'Dirección',
   'Acciones'
@@ -18,6 +18,13 @@ const headers = ref([
 async function cargarDatos() {
   const pacientes = await getPacientes()
   data.value = pacientes.map(p => ({
+    // Mantener nombres compatibles con el diálogo
+    num_Historia_clinica: p.num_Historia_clinica,
+    nombre_Paciente: p.nombre_Paciente,
+    apellidos: p.apellidos || '', // Campo adicional si existe
+    direccion_Paciente: p.direccion_Paciente,
+    fecha_Nacimiento: p.fecha_Nacimiento,
+    // Campos para visualización en tabla
     histClin: p.num_Historia_clinica,
     nombre: `${p.nombre_Paciente} ${p.apellidos || ''}`.trim(),
     fechaNac: p.fecha_Nacimiento,
@@ -31,7 +38,13 @@ function abrirModalAgregar() {
 }
 
 function editarPaciente(paciente) {
-  selectedPaciente.value = paciente
+  // Pasar el objeto con los nombres que espera el diálogo
+  selectedPaciente.value = {
+    num_Historia_clinica: paciente.num_Historia_clinica,
+    nombre_Paciente: paciente.nombre_Paciente,
+    direccion_Paciente: paciente.direccion_Paciente,
+    fecha_Nacimiento: paciente.fecha_Nacimiento
+  }
   openCreateDialog.value = true
 }
 
@@ -82,9 +95,10 @@ onMounted(() => {
   </v-table>
   </v-container>
   
-  <PacienteDialog
+<PacienteDialog
     v-model="openCreateDialog"
     :paciente="selectedPaciente"
+    @submit="cargarDatos" 
   />
 </template>
 

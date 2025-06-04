@@ -1,8 +1,7 @@
 <script setup>
 import { defineProps, defineEmits, ref, watch } from 'vue'
-import {createMedico} from '@/functions.js'
+import { createMedico, updateMedico } from '@/functions.js'
 
-// Definición de props
 const props = defineProps({
   modelValue: {
     type: Boolean,
@@ -14,7 +13,6 @@ const props = defineProps({
   }
 })
 
-// Emits
 const emit = defineEmits(['update:modelValue', 'submit'])
 
 // Campos reactivos del formulario
@@ -22,27 +20,32 @@ const cod_Med = ref('')
 const nombre_Med = ref('')
 const apellidos = ref('')
 const especialidad = ref('')
-const num_Licencia = ref(0)
+const num_Licencia = ref('')
 const telefono = ref('')
-const anios_Expmed = ref(0)
+const anios_Expmed = ref('')
 const datos_Contacto = ref('')
-const cod_Unidad = ref(0)
+const cod_Unidad = ref('')
+const cod_Dpto = ref('')
+const cod_Hosp = ref('')
 
 const isEdit = ref(false)
 const creationDialog = ref(false)
+const errorMessage = ref('')
 
 // Cargar datos si estamos editando
 watch(() => props.medico, (nuevo) => {
   if (nuevo) {
-    cod_Med.value = nuevo.cod_med
-    nombre_Med.value = nuevo.nombre_Med
-    apellidos.value = nuevo.Apellidos
-    especialidad.value = nuevo.especialidad
-    num_Licencia.value = nuevo.num_Licencia
-    telefono.value = nuevo.telefono
-    anios_Expmed.value = nuevo.anios_Expmed
-    datos_Contacto.value = nuevo.datos_Contacto
-    cod_Unidad.value = nuevo.cod_Unidad
+    cod_Med.value = nuevo.cod_medico || ''
+    nombre_Med.value = nuevo.nombre_Med || nuevo.nombre_completo?.split(' ')[0] || ''
+    apellidos.value = nuevo.Apellidos || nuevo.nombre_completo?.split(' ').slice(1).join(' ') || ''
+    especialidad.value = nuevo.especialidad || ''
+    num_Licencia.value = nuevo.num_Licencia || nuevo.licencia || ''
+    telefono.value = nuevo.telefono || ''
+    anios_Expmed.value = nuevo.anios_Expmed || nuevo.anios_experiencia || ''
+    datos_Contacto.value = nuevo.datos_Contacto || nuevo.contacto || ''
+    cod_Unidad.value = nuevo.cod_Unidad || nuevo.unidad || ''
+    cod_Dpto.value = nuevo.cod_Dpto || nuevo.departamento || ''
+    cod_Hosp.value = nuevo.cod_Hptal || nuevo.cod_Hosp || nuevo.hospital || ''
     isEdit.value = true
   } else {
     limpiarFormulario()
@@ -55,17 +58,21 @@ function limpiarFormulario() {
   nombre_Med.value = ''
   apellidos.value = ''
   especialidad.value = ''
-  num_Licencia.value = 0
+  num_Licencia.value = ''
   telefono.value = ''
-  anios_Expmed.value = 0
+  anios_Expmed.value = ''
   datos_Contacto.value = ''
-  cod_Unidad.value = 0
+  cod_Unidad.value = ''
+  cod_Dpto.value = ''
+  cod_Hosp.value = ''
+  errorMessage.value = ''
 }
 
 async function handleSubmit() {
   // Validaciones básicas
-  if (!cod_Med.value || !nombre_Med.value.trim() || !especialidad.value.trim()) {
-    alert('Completa los campos obligatorios')
+  if (!cod_Med.value || !nombre_Med.value.trim() || !especialidad.value.trim() || 
+      !num_Licencia.value || !cod_Unidad.value || !cod_Dpto.value || !cod_Hosp.value) {
+    errorMessage.value = 'Complete todos los campos obligatorios'
     return
   }
 
@@ -78,22 +85,29 @@ async function handleSubmit() {
     telefono: telefono.value,
     anios_Expmed: anios_Expmed.value,
     datos_Contacto: datos_Contacto.value,
-    cod_Unidad: cod_Unidad.value
+    cod_Unidad: cod_Unidad.value,
+    cod_Dpto: cod_Dpto.value,
+    cod_Hptal: cod_Hosp.value
   }
 
   try {
+    let resultado
     if (isEdit.value) {
-      await updateMedico(datos.cod_Med, datos)
+      resultado = await updateMedico(cod_Med.value, datos)
     } else {
-      await createMedico(datos)
+      resultado = await createMedico(datos)
     }
 
-    emit('submit')
-    emit('update:modelValue', false)
-    creationDialog.value = true
+    if (resultado?.success) {
+      emit('submit')
+      emit('update:modelValue', false)
+      creationDialog.value = true
+    } else {
+      errorMessage.value = resultado?.error
+    }
   } catch (err) {
-    console.error(err)
-    alert(`❌ Error al guardar: ${err.message}`)
+    console.error('Error:', err)
+    errorMessage.value = err.response?.data?.error || err.message || 'Error desconocido'
   }
 }
 </script>
@@ -108,42 +122,103 @@ async function handleSubmit() {
     <v-card>
       <v-card-title>{{ isEdit ? 'Editar Médico' : 'Nuevo Médico' }}</v-card-title>
       <v-card-text>
+        <!-- Mensaje de error -->
+        <v-alert
+          v-if="errorMessage"
+          type="error"
+          class="mb-4"
+        >
+          {{ errorMessage }}
+        </v-alert>
+
         <v-container>
           <v-row dense>
             <v-col cols="12" sm="6">
-              <v-text-field label="Código Médico" v-model.number="cod_Med" required />
+              <v-text-field 
+                label="Código Médico" 
+                v-model.number="cod_Med" 
+                required 
+                :disabled="isEdit"
+              />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field label="Nombre del Médico" v-model="nombre_Med" required />
+              <v-text-field 
+                label="Nombre del Médico" 
+                v-model="nombre_Med" 
+                required 
+              />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field label="Apellidos" v-model="apellidos" />
+              <v-text-field 
+                label="Apellidos" 
+                v-model="apellidos" 
+              />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field label="Especialidad" v-model="especialidad" required />
+              <v-text-field 
+                label="Especialidad" 
+                v-model="especialidad" 
+                required 
+              />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field label="Licencia Médica" v-model.number="num_Licencia" required />
+              <v-text-field 
+                label="Licencia Médica" 
+                v-model.number="num_Licencia" 
+                required 
+              />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field label="Teléfono" v-model="telefono" />
+              <v-text-field 
+                label="Teléfono" 
+                v-model="telefono" 
+              />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field label="Años de experiencia" type="number" v-model.number="anios_Expmed" />
+              <v-text-field 
+                label="Años de experiencia" 
+                type="number" 
+                v-model.number="anios_Expmed" 
+              />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field label="Datos de contacto" v-model="datos_Contacto" />
+              <v-text-field 
+                label="Datos de contacto" 
+                v-model="datos_Contacto" 
+              />
             </v-col>
-            <v-col cols="12" sm="6">
-              <v-text-field label="Código Unidad" v-model.number="cod_Unidad" required />
+            <v-col cols="12" sm="4">
+              <v-text-field 
+                label="Código Unidad" 
+                v-model.number="cod_Unidad" 
+                required 
+              />
+            </v-col>
+            <v-col cols="12" sm="4">
+              <v-text-field 
+                label="Código Departamento" 
+                v-model.number="cod_Dpto" 
+                required 
+              />
+            </v-col>
+            <v-col cols="12" sm="4">
+              <v-text-field 
+                label="Código Hospital" 
+                v-model.number="cod_Hosp" 
+                required 
+              />
             </v-col>
           </v-row>
         </v-container>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="error" variant="text" @click="$emit('update:modelValue', false)">Cancelar</v-btn>
-        <v-btn color="success" @click="handleSubmit">Guardar</v-btn>
+        <v-btn color="error" variant="text" @click="$emit('update:modelValue', false)">
+          Cancelar
+        </v-btn>
+        <v-btn color="success" @click="handleSubmit">
+          {{ isEdit ? 'Actualizar' : 'Guardar' }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

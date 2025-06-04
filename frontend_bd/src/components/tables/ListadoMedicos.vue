@@ -2,8 +2,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import MedicoDialog from '@/components/modals/MedicoDialog.vue'
-import { getAllMedicos, deleteMedico, createMedico } from '@/functions.js'
-import { exportToPDF } from '@/utils/exportToPDF.js'
+import { getAllMedicos, deleteMedico } from '@/functions.js'
+import { exportToPDF } from '@/utils/exportToPdf'
 
 // Datos reactivos
 const data = ref([])
@@ -37,7 +37,7 @@ async function cargarDatos() {
     contacto: m.datos_Contacto,
     unidad: m.cod_Unidad,
     departamento: m.cod_Dpto,
-    hospital: m.cod_Hptal
+    hospital: m.cod_Hosp
   }))
 }
 
@@ -51,15 +51,19 @@ function editarMedico(medico) {
   openCreateDialog.value = true
 }
 
-async function handleDelete(codMedico) {
-  if (confirm('¿Estás seguro de eliminar este médico?')) {
+async function handleDelete(medico) {
+  confirm('¿Estás seguro de eliminar este médico?')
     try {
-      await deleteMedico(codMedico)
+      await deleteMedico(
+        medico.cod_medico,
+        medico.unidad,
+        medico.departamento,
+        medico.hospital
+      )
       await cargarDatos()
     } catch (err) {
-      alert(`❌ Error al eliminar: ${err.message}`)
+      alert(`❌ Error al eliminar: ${err.response?.data?.error || err.message}`)
     }
-  }
 }
 
 // Exportar a PDF
@@ -117,7 +121,7 @@ onMounted(() => {
             <v-btn icon size="x-small" color="primary" title="Editar" @click="editarMedico(item)">
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
-            <v-btn icon size="x-small" color="red" title="Eliminar" @click="handleDelete(item.cod_medico)">
+            <v-btn icon size="x-small" color="red" title="Eliminar" @click="handleDelete(item)">
               <v-icon>mdi-delete</v-icon>
             </v-btn>
           </td>

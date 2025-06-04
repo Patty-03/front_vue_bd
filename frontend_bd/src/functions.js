@@ -72,9 +72,8 @@ export async function getPacienteByHistoria(historia) {
 export async function updatePaciente(historia, paciente) {
   const formData = new URLSearchParams()
   formData.append('nombre_Paciente', paciente.nombre_Paciente)
-  formData.append('fecha_Nacimiento', paciente.fecha_Nacimiento)
-  formData.append('direccion_Paciente', paciente.direccion_Paciente)
-  formData.append('cod_Unidad', paciente.cod_Unidad)
+  formData.append('direccion_Paciente', paciente.direccion_Paciente || '')
+  formData.append('fecha_Nacimiento', paciente.fecha_Nacimiento) // Asegúrate que esté en formato YYYY-MM-DD
 
   try {
     const response = await axios.put(
@@ -84,7 +83,7 @@ export async function updatePaciente(historia, paciente) {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-      },
+      }
     )
     return response.data
   } catch (error) {
@@ -133,7 +132,7 @@ export async function updateMedico(cod_Med, medico) {
   formData.append('cod_Unidad', medico.cod_Unidad)
 
   try {
-    const response = await axios.put(`${API_URL}/medicos/${cod_Med}`, formData.toString(), {
+    const response = await axios.put(`http://localhost:8080/api/medicos/update/${cod_Med}`, formData.toString(), {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
@@ -145,13 +144,16 @@ export async function updateMedico(cod_Med, medico) {
   }
 }
 
-export async function deleteMedico(cod_Med) {
+export async function deleteMedico(cod_Med, cod_Unidad, cod_Dpto, cod_Hptal) {
   try {
-    const response = await axios.delete(`http://localhost:8080/api/medicos/${cod_Med}`, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-    })
+    const response = await axios.delete(
+      `http://localhost:8080/api/medicos/delete/${cod_Med}/${cod_Unidad}/${cod_Dpto}/${cod_Hptal}`,
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      }
+    )
     return response.data
   } catch (error) {
     console.error('Error al eliminar médico:', error.response?.data || error.message)
@@ -303,8 +305,21 @@ export async function updateUnidad(params) {
   alert("CODIGO DE MODIFICAR")
 }
 
-export async function deleteUnidad(params) {
-  alert("CODIGO DE BORRAR")
+export async function deleteUnidad(cod_Unidad, cod_Dpto, cod_Hosp) {
+  try {
+    const response = await axios.delete(
+      `http://localhost:8080/api/unidades/delete/${cod_Unidad}/${cod_Dpto}/${cod_Hosp}`,
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error al eliminar unidad:', error.response?.data || error.message)
+    throw error
+  }
 }
 
 export async function getAllUnidades() {
@@ -336,11 +351,36 @@ export async function getAllRegistros() {
       headers: {
         'Content-Type': 'application/json'
       }
-    })
-    return response.data.registros || []
+    });
+
+    // Verificar si la respuesta tiene el formato esperado
+    if (response.data && response.data.success && Array.isArray(response.data.data)) {
+      return response.data.data; // Devuelve el array de registros
+    }
+    
+    // Si la respuesta no tiene el formato esperado pero es un array (backwards compatibility)
+    if (Array.isArray(response.data)) {
+      return response.data;
+    }
+    
+    console.warn('La respuesta no contiene datos válidos:', response.data);
+    return [];
+    
   } catch (error) {
-    console.error('Error al obtener registros:', error.response?.data || error.message)
-    return []
+    // Manejo detallado de errores
+    if (error.response) {
+      console.error('Error del servidor:', {
+        status: error.response.status,
+        message: error.response.data.error || error.message,
+        data: error.response.data
+      });
+    } else if (error.request) {
+      console.error('No se recibió respuesta del servidor:', error.message);
+    } else {
+      console.error('Error al configurar la petición:', error.message);
+    }
+    
+    return [];
   }
 }
 

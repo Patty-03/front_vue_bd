@@ -17,11 +17,14 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'submit'])
 
 // Campos reactivos del formulario
-const num_Historia_clinica = ref('')
+const num_Historia_Clinica = ref('')
 const cod_Unidad = ref(0)
 const fue_Atendido = ref(false)
 const causa_No_Atendido = ref('')
+const estado = ref('Activo') // Valor por defecto
 const fecha_Registro = ref('')
+const cod_Hptal = ref(0)
+const cod_Dpto = ref(0)
 
 const isEdit = ref(false)
 const creationDialog = ref(false)
@@ -29,11 +32,14 @@ const creationDialog = ref(false)
 // Cargar datos si estamos editando
 watch(() => props.registro, (nuevo) => {
   if (nuevo) {
-    num_Historia_clinica.value = nuevo.num_Historia_clinica
+    num_Historia_Clinica.value = nuevo.num_Historia_Clinica
     cod_Unidad.value = nuevo.cod_Unidad
     fue_Atendido.value = nuevo.fue_Atendido
     causa_No_Atendido.value = nuevo.causa_No_Atendido || ''
+    estado.value = nuevo.estado || 'Activo'
     fecha_Registro.value = nuevo.fecha_Registro
+    cod_Hptal.value = nuevo.cod_Hptal || 0
+    cod_Dpto.value = nuevo.cod_Dpto || 0
 
     isEdit.value = true
   } else {
@@ -43,31 +49,37 @@ watch(() => props.registro, (nuevo) => {
 }, { immediate: true })
 
 function limpiarFormulario() {
-  num_Historia_clinica.value = ''
+  num_Historia_Clinica.value = ''
   cod_Unidad.value = 0
   fue_Atendido.value = false
   causa_No_Atendido.value = ''
+  estado.value = 'Activo'
   fecha_Registro.value = ''
+  cod_Hptal.value = 0
+  cod_Dpto.value = 0
 }
 
 async function handleSubmit() {
   // Validación básica
-  if (!num_Historia_clinica.value || !cod_Unidad.value) {
+  if (!num_Historia_Clinica.value || !cod_Unidad.value || !estado.value) {
     alert('Completa los campos obligatorios')
     return
   }
 
   const datos = {
-    num_Historia_clinica: num_Historia_clinica.value,
+    num_Historia_Clinica: num_Historia_Clinica.value,
     cod_Unidad: cod_Unidad.value,
     fue_Atendido: fue_Atendido.value,
-    causa_No_Atendido: causa_No_Atendido.value,
-    fecha_Registro: fecha_Registro.value
+    causa_No_Atendido: causa_No_Atendido.value || null,
+    estado: estado.value,
+    fecha_Registro: fecha_Registro.value || new Date().toISOString().split('T')[0],
+    cod_Hptal: cod_Hptal.value,
+    cod_Dpto: cod_Dpto.value
   }
 
   try {
     if (isEdit.value) {
-      await updateRegistro(datos.num_Historia_clinica, datos)
+      await updateRegistro(datos.num_Historia_Clinica, datos)
     } else {
       await createRegistro(datos)
     }
@@ -95,24 +107,64 @@ async function handleSubmit() {
         <v-container>
           <v-row dense>
             <v-col cols="12" sm="6">
-              <v-text-field label="Número Historia Clínica" v-model.number="num_Historia_clinica" required />
+              <v-text-field 
+                label="Número Historia Clínica" 
+                v-model.number="num_Historia_Clinica" 
+                required 
+              />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field label="Código de Unidad" v-model.number="cod_Unidad" required />
+              <v-text-field 
+                label="Código de Unidad" 
+                v-model.number="cod_Unidad" 
+                required 
+              />
             </v-col>
             <v-col cols="12" sm="6">
               <v-select
-                :items="['Sí', 'No']"
                 label="¿Fue atendido?"
                 v-model="fue_Atendido"
+                :items="[{ text: 'Sí', value: true }, { text: 'No', value: false }]"
+                item-title="text"
+                item-value="value"
                 required
               />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field label="Causa No Atendido" v-model="causa_No_Atendido" />
+              <v-text-field 
+                label="Causa No Atendido" 
+                v-model="causa_No_Atendido" 
+                :disabled="fue_Atendido"
+              />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field label="Fecha de Registro" type="date" v-model="fecha_Registro" />
+              <v-select
+                label="Estado"
+                v-model="estado"
+                :items="['Activo', 'Pendiente', 'Cancelado', 'Completado']"
+                required
+              />
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field 
+                label="Fecha de Registro" 
+                type="date" 
+                v-model="fecha_Registro" 
+              />
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field 
+                label="Código Hospital" 
+                v-model.number="cod_Hptal" 
+                required 
+              />
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field 
+                label="Código Departamento" 
+                v-model.number="cod_Dpto" 
+                required 
+              />
             </v-col>
           </v-row>
         </v-container>
