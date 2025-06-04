@@ -2,12 +2,14 @@
 import { ref, onMounted } from 'vue'
 import UnidadDialog from '@/components/modals/UnidadDialog.vue'
 import { getAllUnidades, deleteUnidad } from '@/functions.js'
+import InformeDialog from '../modals/InformeDialog.vue'
 
 // Datos reactivos
 const data = ref([])
 const dialogVisible = ref(false) // Cambiado de openCreateDialog a dialogVisible para mayor claridad
 const selectedUnidad = ref(null)
 const successDialog = ref(false) // Diálogo de éxito
+const informeDialogVisible = ref(false)
 
 // Encabezados de la tabla
 const headers = ref([
@@ -15,6 +17,7 @@ const headers = ref([
   'Nombre de Unidad',
   'Ubicación Hospital',
   'Departamento',
+  'Hospital',
   'Acciones'
 ])
 
@@ -25,7 +28,7 @@ async function cargarDatos() {
     nombre_Unidad: u.nombre_Unidad,
     ubic_Hptal: u.ubicacion_Hptal,
     cod_Dpto: u.cod_Dpto,
-    cod_Hosp: u.cod_Hosp // Asegúrate de incluir este campo
+    cod_Hptal: u.cod_Hptal // Asegúrate de incluir este campo
   }))
 }
 
@@ -39,22 +42,35 @@ function editarUnidad(unidad) {
   dialogVisible.value = true
 }
 
-async function eliminarUnidad(unidad) {
+async function eliminarUnidad(item) {
+  if (confirm('¿Estás seguro de eliminar esta unidad?')) {
     try {
-      await deleteUnidad({
-        cod_Unidad: unidad.cod_Unidad,
-        cod_Dpto: unidad.cod_Dpto,
-        cod_Hosp: unidad.cod_Hosp // Asegúrate de que este campo existe en tus datos
-      })
+      // Verificar que los códigos sean números válidos
+      if (isNaN(item.cod_Unidad)) throw new Error('Código de unidad inválido')
+      if (isNaN(item.cod_Dpto)) throw new Error('Código de departamento inválido')
+      if (isNaN(item.cod_Hosp)) throw new Error('Código de hospital inválido')
+      
+      await deleteUnidad(
+        Number(item.cod_Unidad),
+        Number(item.cod_Dpto),
+        Number(item.cod_Hosp)
+      )
       await cargarDatos()
     } catch (err) {
       alert(`❌ Error al eliminar: ${err.message}`)
     }
+  }
 }
+
 function onSuccess() {
   dialogVisible.value = false
   successDialog.value = true
   cargarDatos()
+}
+
+function generarInforme(unidad) {
+  selectedUnidad.value = { ...unidad } // Copiamos para evitar mutaciones
+  informeDialogVisible.value = true
 }
 
 onMounted(() => {
@@ -84,6 +100,7 @@ onMounted(() => {
           <td>{{ item.nombre_Unidad }}</td>
           <td>{{ item.ubic_Hptal }}</td>
           <td>{{ item.cod_Dpto }}</td>
+          <td>{{ item.cod_Hptal }}</td>
           <td class="d-flex justify-start" style="gap: 8px;">
             <v-btn icon size="x-small" color="primary" title="Editar" @click="editarUnidad(item)">
               <v-icon>mdi-pencil</v-icon>
@@ -91,6 +108,7 @@ onMounted(() => {
             <v-btn icon size="x-small" color="red" title="Eliminar" @click="eliminarUnidad(item.cod_Unidad)">
               <v-icon>mdi-delete</v-icon>
             </v-btn>
+            <v-btn color="warning" icon size="x-small" title="Generar informe" @click="generarInforme(item)"><v-icon>mdi-clipboard-text</v-icon></v-btn>
           </td>
         </tr>
       </tbody>
@@ -113,6 +131,12 @@ onMounted(() => {
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <InformeDialog
+    v-model="informeDialogVisible"
+    :unidad="selectedUnidad"
+    @submit="cargarDatos"
+  />
 </template>
 
 <style scoped>

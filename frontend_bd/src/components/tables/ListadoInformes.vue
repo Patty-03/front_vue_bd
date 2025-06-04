@@ -1,7 +1,6 @@
 <!-- views/ListadoInformes.vue -->
 <script setup>
 import { ref, onMounted } from 'vue'
-import InformeDialog from '@/components/modals/InformeDialog.vue'
 import { getAllInformes, deleteInforme } from '@/functions.js'
 
 // Datos reactivos
@@ -40,16 +39,6 @@ async function cargarDatos() {
   }))
 }
 
-function abrirModalAgregar() {
-  selectedInforme.value = null
-  openCreateDialog.value = true
-}
-
-function editarInforme(informe) {
-  selectedInforme.value = informe
-  openCreateDialog.value = true
-}
-
 async function eliminarInforme(num_Inf) {
   if (confirm('¿Estás seguro de eliminar este informe?')) {
     try {
@@ -69,9 +58,6 @@ onMounted(() => {
 <template>
   <v-container class="d-flex flex-row align-center justify-start">
     <h1>Informes</h1>
-    <v-btn color="success" icon size="x-small" class="ml-2" @click="abrirModalAgregar">
-      <v-icon>mdi-plus</v-icon>
-    </v-btn>
   </v-container>
 
   <h2 v-if="data.length == 0">No hay contenido para mostrar</h2>
@@ -95,9 +81,6 @@ onMounted(() => {
           <td>{{ item.cod_Hptal }}</td>
           <td>{{ item.cod_Dpto }}</td>
           <td class="d-flex justify-start" style="gap: 8px">
-            <v-btn icon size="x-small" color="primary" title="Editar" @click="editarInforme(item)">
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
             <v-btn
               icon
               size="x-small"

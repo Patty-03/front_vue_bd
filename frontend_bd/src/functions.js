@@ -228,7 +228,7 @@ export async function updateHospital(hospital) {
 }
 
 export async function deleteHospital(cod_Hptal) {
-  const response = await axios.delete(`http://localhost:8080/api/delete/${cod_Hptal}`, {
+  const response = await axios.delete(`http://localhost:8080/api/hospitales/delete/${cod_Hptal}`, {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
