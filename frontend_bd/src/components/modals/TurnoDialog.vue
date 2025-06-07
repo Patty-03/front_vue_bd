@@ -1,6 +1,6 @@
 <script setup>
-import { defineProps, defineEmits, ref, watch } from 'vue'
-import { createTurno, updateTurno } from '@/functions.js'
+import {defineProps, defineEmits, ref, watch} from 'vue'
+import {createTurno, updateTurno} from '@/functions.js'
 
 // Props
 const props = defineProps({
@@ -28,7 +28,7 @@ const cod_Dpto = ref(0)
 
 const isEdit = ref(false)
 const creationDialog = ref(false)
-
+const errorMessage = ref('')
 // Cargar datos si estamos editando
 watch(() => props.turno, (nuevo) => {
   if (nuevo) {
@@ -44,16 +44,16 @@ watch(() => props.turno, (nuevo) => {
     limpiarFormulario()
     isEdit.value = false
   }
-}, { immediate: true })
+}, {immediate: true})
 
 function limpiarFormulario() {
   num_Turno.value = ''
   cod_Medico.value = ''
   cod_Unidad.value = ''
-  cant_Pacientes_Asignados.value = 0
-  cant_Pacientes_Atendidos.value = 0
-  cod_Hptal.value = 0
-  cod_Dpto.value = 0
+  cant_Pacientes_Asignados.value = ""
+  cant_Pacientes_Atendidos.value = ""
+  cod_Hptal.value = ""
+  cod_Dpto.value = ""
 }
 
 async function handleSubmit() {
@@ -65,37 +65,41 @@ async function handleSubmit() {
 
   const datos = {
     num_Turno: parseInt(num_Turno.value),
-    cod_Medico: cod_Medico.value ? parseInt(cod_Medico.value) : null,
+    cod_Medico: parseInt(cod_Medico.value),
     cod_Unidad: parseInt(cod_Unidad.value),
     cant_Pacientes_Asignados: parseInt(cant_Pacientes_Asignados.value),
     cant_Pacientes_Atendidos: parseInt(cant_Pacientes_Atendidos.value),
     cod_Hptal: parseInt(cod_Hptal.value),
-    cod_Dpto: cod_Dpto.value ? parseInt(cod_Dpto.value) : null
+    cod_Dpto: parseInt(cod_Dpto.value)
   }
 
   try {
+    let resultado
     if (isEdit.value) {
-      await updateTurno(datos.num_Turno, datos)
+      await updateTurno(datos)
     } else {
       await createTurno(datos)
     }
-
-    emit('submit')
-    emit('update:modelValue', false)
-    creationDialog.value = true
+    if (resultado?.success) {
+      emit('submit')
+      emit('update:modelValue', false)
+      creationDialog.value = true
+    } else {
+      errorMessage.value = resultado?.error
+    }
   } catch (err) {
     console.error(err)
-    alert(`❌ Error al guardar: ${err.message}`)
+    errorMessage.value = err.response?.data?.error || err.message || 'Error desconocido'
   }
 }
 </script>
 
 <template>
   <v-dialog
-    :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
-    max-width="600"
-    persistent
+      :model-value="modelValue"
+      @update:model-value="$emit('update:modelValue', $event)"
+      max-width="600"
+      persistent
   >
     <v-card>
       <v-card-title>{{ isEdit ? 'Editar Turno' : 'Nuevo Turno' }}</v-card-title>
@@ -103,25 +107,25 @@ async function handleSubmit() {
         <v-container>
           <v-row dense>
             <v-col cols="12" sm="6">
-              <v-text-field label="Número de Turno" v-model.number="num_Turno" required />
+              <v-text-field label="Número de Turno" v-model.number="num_Turno" required:disabled="isEdit"/>
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field label="Código Médico" v-model.number="cod_Medico" />
+              <v-text-field label="Código Médico" v-model.number="cod_Medico"/>
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field label="Código Unidad" v-model.number="cod_Unidad" required />
+              <v-text-field label="Código Unidad" v-model.number="cod_Unidad" required:disabled="isEdit"/>
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field label="Pacientes Asignados" v-model.number="cant_Pacientes_Asignados" required />
+              <v-text-field label="Pacientes Asignados" v-model.number="cant_Pacientes_Asignados" required/>
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field label="Pacientes Atendidos" v-model.number="cant_Pacientes_Atendidos" />
+              <v-text-field label="Pacientes Atendidos" v-model.number="cant_Pacientes_Atendidos"/>
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field label="Código Hospital" v-model.number="cod_Hptal" required />
+              <v-text-field label="Código Hospital" v-model.number="cod_Hptal" required:disabled="isEdit"/>
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field label="Código Departamento" v-model.number="cod_Dpto" />
+              <v-text-field label="Código Departamento" v-model.number="cod_Dpto" required:disabled="isEdit"/>
             </v-col>
           </v-row>
         </v-container>

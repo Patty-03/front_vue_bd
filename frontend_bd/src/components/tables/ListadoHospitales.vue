@@ -65,32 +65,32 @@ onMounted(() => {
   <v-container fluid width="80vw" v-else>
     <v-table fixed-header height="400px">
       <thead>
-        <tr>
-          <th v-for="header in headers" :key="header">{{ header }}</th>
-        </tr>
+      <tr>
+        <th v-for="header in headers" :key="header">{{ header }}</th>
+      </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, idx) in data" :key="idx">
-          <td>{{ item.cod_Hptal }}</td>
-          <td>{{ item.nombre_hptal }}</td>
-          <td class="d-flex justify-start" style="gap: 8px;">
-            <v-btn icon size="x-small" color="primary" title="Editar" @click="editarHospital(item)">
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-            <v-btn icon size="x-small" color="red" title="Eliminar" @click="eliminarHospital(item.cod_Hptal)">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </td>
-        </tr>
+      <tr v-for="(item, idx) in data" :key="idx">
+        <td>{{ item.cod_Hptal }}</td>
+        <td>{{ item.nombre_hptal }}</td>
+        <td class="d-flex justify-start" style="gap: 8px;">
+          <v-btn icon size="x-small" color="primary" title="Editar" @click="editarHospital(item)">
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+          <v-btn icon size="x-small" color="red" title="Eliminar" @click="eliminarHospital(item.cod_Hptal)">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+        </td>
+      </tr>
       </tbody>
     </v-table>
   </v-container>
 
   <!-- Modal para agregar/editar -->
   <HospitalDialog
-    v-model="openCreateDialog"
-    :hospital="selectedHospital"
-    @submit="cargarDatos"
+      v-model="openCreateDialog"
+      :hospital="selectedHospital"
+      @submit="cargarDatos"
   />
 </template>
 

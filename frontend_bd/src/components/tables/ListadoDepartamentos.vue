@@ -36,10 +36,13 @@ function editarDepartamento(departamento) {
   openCreateDialog.value = true
 }
 
-async function eliminarDepartamento(cod_Dpto) {
+async function eliminarDepartamento(cod_Hptal,cod_Dpto) {
   if (confirm('¿Estás seguro de eliminar este departamento?')) {
     try {
-      await deleteDepartamento(cod_Dpto)
+      const resultado=await deleteDepartamento(cod_Hptal,cod_Dpto)
+      if(resultado.error){
+        alert(resultado.error)
+      }
       await cargarDatos()
     } catch (err) {
       alert(`❌ Error al eliminar el departamento: ${err.message}`)
@@ -64,33 +67,33 @@ onMounted(() => {
   <v-container fluid width="80vw" v-else>
     <v-table fixed-header height="400px">
       <thead>
-        <tr>
-          <th v-for="header in headers" :key="header">{{ header }}</th>
-        </tr>
+      <tr>
+        <th v-for="header in headers" :key="header">{{ header }}</th>
+      </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, idx) in data" :key="idx">
-          <td>{{ item.cod_Dpto }}</td>
-          <td>{{ item.nombre_Dpto }}</td>
-          <td>{{ item.cod_Hptal }}</td>
-          <td class="d-flex justify-start" style="gap: 8px;">
-            <v-btn icon size="x-small" color="primary" title="Editar" @click="editarDepartamento(item)">
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-            <v-btn icon size="x-small" color="red" title="Eliminar" @click="eliminarDepartamento(item.cod_Dpto)">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </td>
-        </tr>
+      <tr v-for="(item, idx) in data" :key="idx">
+        <td>{{ item.cod_Dpto }}</td>
+        <td>{{ item.nombre_Dpto }}</td>
+        <td>{{ item.cod_Hptal }}</td>
+        <td class="d-flex justify-start" style="gap: 8px;">
+          <v-btn icon size="x-small" color="primary" title="Editar" @click="editarDepartamento(item)">
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+          <v-btn icon size="x-small" color="red" title="Eliminar" @click="eliminarDepartamento(item.cod_Hptal,item.cod_Dpto)">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+        </td>
+      </tr>
       </tbody>
     </v-table>
   </v-container>
 
   <!-- Modal para agregar/editar -->
   <DepartamentoDialog
-    v-model="openCreateDialog"
-    :departamento="selectedDepartamento"
-    @submit="cargarDatos"
+      v-model="openCreateDialog"
+      :departamento="selectedDepartamento"
+      @submit="cargarDatos"
   />
 </template>
 

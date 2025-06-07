@@ -73,10 +73,10 @@ async function handleSubmit() {
 
 <template>
   <v-dialog
-    :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
-    max-width="600"
-    persistent
+      :model-value="modelValue"
+      @update:model-value="$emit('update:modelValue', $event)"
+      max-width="600"
+      persistent
   >
     <v-card>
       <v-card-title>{{ isEdit ? 'Editar Hospital' : 'Nuevo Hospital' }}</v-card-title>
