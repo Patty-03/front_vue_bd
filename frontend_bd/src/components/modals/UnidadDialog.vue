@@ -1,6 +1,6 @@
 <script setup>
-import { defineProps, defineEmits, ref, watch } from 'vue'
-import { createUnidad, updateUnidad } from '@/functions.js'
+import {defineProps, defineEmits, ref, watch} from 'vue'
+import {createUnidad, updateUnidad} from '@/functions.js'
 
 const props = defineProps({
   modelValue: Boolean, // Para el v-model
@@ -13,64 +13,80 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'success'])
 
 // Campos reactivos
-const form = ref({
-  cod_Unidad: '',
-  nombre_Unidad: '',
-  ubic_Hptal: '',
-  cod_Dpto: 0,
-  cod_Hosp: 0
-})
+// Campos reactivos
+
+const cod_Unidad = ref('')
+const nombre_Unidad = ref('')
+const ubicacion_Hptal = ref('')
+const cod_Dpto = ref('')
+const cod_Hptal = ref('')
+
 
 const isEdit = ref(false)
-
 // Cargar datos si estamos editando
 watch(() => props.unidad, (nuevo) => {
   if (nuevo) {
+    cod_Unidad.value = nuevo.cod_Unidad
+    nombre_Unidad.value = nuevo.nombre_Unidad
+    ubicacion_Hptal.value = nuevo.ubicacion_Hptal
+    cod_Dpto.value = nuevo.cod_Dpto
+    cod_Hptal.value = nuevo.cod_Hptal
     isEdit.value = true
-    form.value = { ...nuevo }
   } else {
+    limpiarFormulario()
     isEdit.value = false
-    resetForm()
   }
-}, { immediate: true })
+}, {immediate: true})
 
-function resetForm() {
-  form.value = {
-    cod_Unidad: '',
-    nombre_Unidad: '',
-    ubic_Hptal: '',
-    cod_Dpto: 0,
-    cod_Hosp: 0
-  }
+
+function limpiarFormulario() {
+  cod_Unidad.value = ''
+  nombre_Unidad.value = ''
+  ubicacion_Hptal.value = ''
+  cod_Dpto.value = ''
+  cod_Hptal.value = ''
+
 }
 
 async function handleSubmit() {
-  try {
-    const formData = new URLSearchParams()
-    Object.entries(form.value).forEach(([key, value]) => {
-      formData.append(key, value)
-    })
+  // Validaciones básicas
+  if (!cod_Unidad.value || !nombre_Unidad.value.trim() || !cod_Dpto.value
+      || !cod_Hptal.value) {
+    alert('Completa todos los campos obligatorios')
+    return
+  }
 
+  const datos = {
+    cod_Unidad: parseInt(cod_Unidad.value),
+    nombre_Unidad: nombre_Unidad.value.trim(),
+    ubicacion_Hptal: ubicacion_Hptal.value.trim(),
+    cod_Dpto: parseInt(cod_Dpto.value),
+    cod_Hptal: parseInt(cod_Hptal.value)
+  }
+  try {
     if (isEdit.value) {
-      await updateUnidad(formData)
+      await updateUnidad(datos)
     } else {
-      await createUnidad(formData)
+      await createUnidad(datos)
+
     }
 
-    emit('success') // Emitir evento de éxito
+    emit('submit') // Emitir evento de éxito
     emit('update:modelValue', false) // Cerrar el diálogo
   } catch (err) {
+    console.error(err)
     alert(`❌ Error: ${err.message}`)
   }
 }
+
 </script>
 
 <template>
   <v-dialog
-    :model-value="modelValue"
-    @update:model-value="emit('update:modelValue', $event)"
-    max-width="600"
-    persistent
+      :model-value="modelValue"
+      @update:model-value="emit('update:modelValue', $event)"
+      max-width="600"
+      persistent
   >
     <v-card>
       <v-card-title>{{ isEdit ? 'Editar Unidad' : 'Nueva Unidad' }}</v-card-title>
@@ -78,38 +94,38 @@ async function handleSubmit() {
         <v-container>
           <v-row dense>
             <v-col cols="12" sm="6">
-              <v-text-field 
-                label="Código de Unidad" 
-                v-model.number="form.cod_Unidad" 
-                required 
-                :disabled="isEdit"
+              <v-text-field
+                  label="Código de Unidad"
+                  v-model.number="cod_Unidad"
+                  required
+                  :disabled="isEdit"
               />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field 
-                label="Nombre de Unidad" 
-                v-model="form.nombre_Unidad" 
-                required 
+              <v-text-field
+                  label="Nombre de Unidad"
+                  v-model="nombre_Unidad"
+                  required
               />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field 
-                label="Ubicación en el hospital" 
-                v-model="form.ubic_Hptal" 
+              <v-text-field
+                  label="Ubicación en el hospital"
+                  v-model="ubicacion_Hptal"
               />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field 
-                label="Código Departamento" 
-                v-model.number="form.cod_Dpto" 
-                required 
+              <v-text-field
+                  label="Código Departamento"
+                  v-model.number="cod_Dpto"
+                  required :disabled="isEdit"
               />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field 
-                label="Código Hospital" 
-                v-model.number="form.cod_Hosp" 
-                required 
+              <v-text-field
+                  label="Código Hospital"
+                  v-model.number="cod_Hptal"
+                  required :disabled="isEdit"
               />
             </v-col>
           </v-row>

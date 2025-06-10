@@ -107,17 +107,17 @@ async function handleSubmit() {
         <v-container>
           <v-row dense>
             <v-col cols="12" sm="6">
-              <v-text-field 
-                label="Número Historia Clínica" 
-                v-model.number="num_Historia_Clinica" 
-                required 
+              <v-text-field
+                label="Número Historia Clínica"
+                v-model.number="num_Historia_Clinica"
+                required
               />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field 
-                label="Código de Unidad" 
-                v-model.number="cod_Unidad" 
-                required 
+              <v-text-field
+                label="Código de Unidad"
+                v-model.number="cod_Unidad"
+                required
               />
             </v-col>
             <v-col cols="12" sm="6">
@@ -131,9 +131,9 @@ async function handleSubmit() {
               />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field 
-                label="Causa No Atendido" 
-                v-model="causa_No_Atendido" 
+              <v-text-field
+                label="Causa No Atendido"
+                v-model="causa_No_Atendido"
                 :disabled="fue_Atendido"
               />
             </v-col>
@@ -146,24 +146,24 @@ async function handleSubmit() {
               />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field 
-                label="Fecha de Registro" 
-                type="date" 
-                v-model="fecha_Registro" 
+              <v-text-field
+                label="Fecha de Registro"
+                type="date"
+                v-model="fecha_Registro"
               />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field 
-                label="Código Hospital" 
-                v-model.number="cod_Hptal" 
-                required 
+              <v-text-field
+                label="Código Hospital"
+                v-model.number="cod_Hptal"
+                required
               />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field 
-                label="Código Departamento" 
-                v-model.number="cod_Dpto" 
-                required 
+              <v-text-field
+                label="Código Departamento"
+                v-model.number="cod_Dpto"
+                required
               />
             </v-col>
           </v-row>

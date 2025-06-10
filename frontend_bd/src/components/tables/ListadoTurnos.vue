@@ -44,10 +44,10 @@ function editarTurno(turno) {
   openCreateDialog.value = true
 }
 
-async function handleDelete(num_Turno) {
+async function handleDelete(turno) {
   if (confirm('¿Estás seguro de eliminar este turno?')) {
     try {
-      await deleteTurno(num_Turno)
+      await deleteTurno(turno.num_Turno,turno.cod_Unidad,turno.cod_Dpto,turno.cod_Hptal)
       await cargarDatos()
     } catch (err) {
       alert(`❌ Error al eliminar: ${err.message}`)
@@ -72,43 +72,43 @@ onMounted(() => {
   <v-container fluid width="80vw" v-else>
     <v-table fixed-header height="400px">
       <thead>
-        <tr>
-          <th v-for="header in headers" :key="header">{{ header }}</th>
-        </tr>
+      <tr>
+        <th v-for="header in headers" :key="header">{{ header }}</th>
+      </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, idx) in data" :key="idx">
-          <td>{{ item.num_Turno }}</td>
-          <td>{{ item.cod_Medico }}</td>
-          <td>{{ item.cod_Unidad }}</td>
-          <td>{{ item.cant_Pacientes_Asignados }}</td>
-          <td>{{ item.cant_Pacientes_Atendidos }}</td>
-          <td>{{ item.cod_Hptal }}</td>
-          <td>{{ item.cod_Dpto }}</td>
-          <td class="d-flex justify-end" style="gap: 8px">
-            <v-btn icon size="x-small" color="primary" title="Editar" @click="editarTurno(item)">
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-            <v-btn
+      <tr v-for="(item, idx) in data" :key="idx">
+        <td>{{ item.num_Turno }}</td>
+        <td>{{ item.cod_Medico }}</td>
+        <td>{{ item.cod_Unidad }}</td>
+        <td>{{ item.cant_Pacientes_Asignados }}</td>
+        <td>{{ item.cant_Pacientes_Atendidos }}</td>
+        <td>{{ item.cod_Hptal }}</td>
+        <td>{{ item.cod_Dpto }}</td>
+        <td class="d-flex justify-end" style="gap: 8px">
+          <v-btn icon size="x-small" color="primary" title="Editar" @click="editarTurno(item)">
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+          <v-btn
               icon
               size="x-small"
               color="red"
               title="Eliminar"
-              @click="handleDelete(item.num_Turno)"
-            >
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </td>
-        </tr>
+              @click="handleDelete(item)"
+          >
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+        </td>
+      </tr>
       </tbody>
     </v-table>
   </v-container>
 
   <!-- Modal para agregar/editar -->
   <TurnoDialog
-    :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
-    :turno="selectedTurno"
+      v-model="openCreateDialog"
+      :turno="selectedTurno"
+      @submit="cargarDatos"
   />
 </template>
 

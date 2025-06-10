@@ -60,9 +60,10 @@ async function handleSubmit() {
 
   try {
     if (isEdit.value) {
-      await updateDepartamento(datos.cod_Dpto, datos)
+      await updateDepartamento(datos)
     } else {
       await createDepartamento(datos)
+
     }
 
     emit('submit')
@@ -77,10 +78,10 @@ async function handleSubmit() {
 
 <template>
   <v-dialog
-    :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
-    max-width="600"
-    persistent
+      :model-value="modelValue"
+      @update:model-value="$emit('update:modelValue', $event)"
+      max-width="600"
+      persistent
   >
     <v-card>
       <v-card-title>{{ isEdit ? 'Editar Departamento' : 'Nuevo Departamento' }}</v-card-title>
@@ -88,13 +89,13 @@ async function handleSubmit() {
         <v-container>
           <v-row dense>
             <v-col cols="12" sm="6">
-              <v-text-field label="Código del Departamento" v-model.number="cod_Dpto" required />
+              <v-text-field label="Código del Departamento" v-model.number="cod_Dpto" required: disabled="isEdit"/>
             </v-col>
             <v-col cols="12" sm="6">
               <v-text-field label="Nombre del Departamento" v-model="nombre_Dpto" required />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field label="Código del Hospital" v-model.number="cod_Hptal" required />
+              <v-text-field label="Código del Hospital" v-model.number="cod_Hptal" required:disabled="isEdit" />
             </v-col>
           </v-row>
         </v-container>

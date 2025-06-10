@@ -26,11 +26,12 @@ async function cargarDatos() {
   data.value = unidades.map(u => ({
     cod_Unidad: u.cod_Unidad,
     nombre_Unidad: u.nombre_Unidad,
-    ubic_Hptal: u.ubicacion_Hptal,
+    ubicacion_Hptal: u.ubicacion_Hptal,
     cod_Dpto: u.cod_Dpto,
-    cod_Hptal: u.cod_Hptal // Asegúrate de incluir este campo
+    cod_Hptal: u.cod_Hptal
   }))
 }
+
 
 function abrirModalAgregar() {
   selectedUnidad.value = null
@@ -38,24 +39,24 @@ function abrirModalAgregar() {
 }
 
 function editarUnidad(unidad) {
-  selectedUnidad.value = { ...unidad } // Copiamos el objeto para evitar mutaciones
+  selectedUnidad.value = {...unidad} // Copiamos el objeto para evitar mutaciones
   dialogVisible.value = true
 }
 
-async function eliminarUnidad(item) {
+async function eliminarUnidad(cod_Hptal, cod_Dpto, cod_Unidad) {
   if (confirm('¿Estás seguro de eliminar esta unidad?')) {
     try {
-      await deleteUnidad(
-        Number(item.cod_Unidad),
-        Number(item.cod_Dpto),
-        Number(item.cod_Hosp)
-      )
+      const resultado = await deleteUnidad(cod_Hptal, cod_Dpto, cod_Unidad)
+      if (resultado.error) {
+        alert(resultado.error)
+      }
       await cargarDatos()
     } catch (err) {
-      alert(`❌ Error al eliminar: ${err.message}`)
+      alert(`❌ Error al eliminar unidad: ${err.message}`)
     }
   }
 }
+
 
 function onSuccess() {
   dialogVisible.value = false
@@ -64,7 +65,7 @@ function onSuccess() {
 }
 
 function generarInforme(unidad) {
-  selectedUnidad.value = { ...unidad } // Copiamos para evitar mutaciones
+  selectedUnidad.value = {...unidad} // Copiamos para evitar mutaciones
   informeDialogVisible.value = true
 }
 
@@ -85,36 +86,39 @@ onMounted(() => {
   <v-container fluid width="80vw" v-else>
     <v-table fixed-header height="400px">
       <thead>
-        <tr>
-          <th v-for="header in headers" :key="header">{{ header }}</th>
-        </tr>
+      <tr>
+        <th v-for="header in headers" :key="header">{{ header }}</th>
+      </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, idx) in data" :key="idx">
-          <td>{{ item.cod_Unidad }}</td>
-          <td>{{ item.nombre_Unidad }}</td>
-          <td>{{ item.ubic_Hptal }}</td>
-          <td>{{ item.cod_Dpto }}</td>
-          <td>{{ item.cod_Hptal }}</td>
-          <td class="d-flex justify-start" style="gap: 8px;">
-            <v-btn icon size="x-small" color="primary" title="Editar" @click="editarUnidad(item)">
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-            <v-btn icon size="x-small" color="red" title="Eliminar" @click="eliminarUnidad(item.cod_Unidad)">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-            <v-btn color="warning" icon size="x-small" title="Generar informe" @click="generarInforme(item)"><v-icon>mdi-clipboard-text</v-icon></v-btn>
-          </td>
-        </tr>
+      <tr v-for="(item, idx) in data" :key="idx">
+        <td>{{ item.cod_Unidad }}</td>
+        <td>{{ item.nombre_Unidad }}</td>
+        <td>{{ item.ubicacion_Hptal }}</td>
+        <td>{{ item.cod_Dpto }}</td>
+        <td>{{ item.cod_Hptal }}</td>
+        <td class="d-flex justify-start" style="gap: 8px;">
+          <v-btn icon size="x-small" color="primary" title="Editar" @click="editarUnidad(item)">
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+          <v-btn icon size="x-small" color="red" title="Eliminar"
+                 @click="eliminarUnidad(item.cod_Hptal,item.cod_Dpto,item.cod_Unidad)">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+          <v-btn color="warning" icon size="x-small" title="Generar informe" @click="generarInforme(item)">
+            <v-icon>mdi-clipboard-text</v-icon>
+          </v-btn>
+        </td>
+      </tr>
       </tbody>
     </v-table>
   </v-container>
 
   <!-- Modal para agregar/editar -->
   <UnidadDialog
-    v-model="dialogVisible"
-    :unidad="selectedUnidad"
-    @success="onSuccess"
+      v-model="dialogVisible"
+      :unidad="selectedUnidad"
+      @success="onSuccess"
   />
 
   <!-- Diálogo de éxito -->
@@ -128,9 +132,9 @@ onMounted(() => {
   </v-dialog>
 
   <InformeDialog
-    v-model="informeDialogVisible"
-    :unidad="selectedUnidad"
-    @submit="cargarDatos"
+      v-model="informeDialogVisible"
+      :unidad="selectedUnidad"
+      @submit="cargarDatos"
   />
 </template>
 
@@ -138,6 +142,7 @@ onMounted(() => {
 .v-table {
   max-width: 100vw;
 }
+
 .no-wrap {
   white-space: nowrap;
 }
