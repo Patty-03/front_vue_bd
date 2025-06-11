@@ -1,63 +1,50 @@
-<!-- views/Login.vue -->
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { login } from '@/functions'
 
 const router = useRouter()
+const form = ref({
+  username: '',
+  password: ''
+})
 
-// Campos del formulario
-const usuario = ref('')
-const contrasena = ref('')
-
-// Mostrar/ocultar contraseña
-const showPassword = ref(false)
-
-// Función de envío
 async function handleSubmit() {
-  if (!usuario.value || !contrasena.value) {
-    alert('⚠️ Por favor ingrese usuario y contraseña')
-    return
-  }
-
-  // Simulación de autenticación local
-  if (usuario.value === 'admin' && contrasena.value === '123456') {
-    // Si es correcto, redirige al Home
+  const success = await login(form.value)
+  if (success) {
     router.push('/home')
-  } else {
-    alert('❌ Usuario o contraseña incorrectos')
   }
 }
 </script>
 
 <template>
-  <v-container class="d-flex align-center justify-center login" style="height: 100vh">
-    <v-card width="400" elevation="8" class="pa-6 rounded-lg mx-auto ">
-      <v-card-title class="text-h5 text-center mb-4">Iniciar Sesión</v-card-title>
-      <v-form @submit.prevent="handleSubmit">
+  <v-container class="d-flex justify-center align-center login" style="height: 100vh">
+    <v-card width="400" elevation="8" class="pa-6 rounded-lg mx-auto">
+      <h2 class="text-h5 text-center mb-4">Iniciar Sesión</h2>
+      <form @submit.prevent="handleSubmit">
         <v-text-field
-          v-model="usuario"
           label="Usuario"
+          v-model="form.username"
           variant="outlined"
           prepend-icon="mdi-account"
           required
           autocomplete="username"
         />
         <v-text-field
-          v-model="contrasena"
-          :type="showPassword ? 'text' : 'password'"
           label="Contraseña"
+          v-model="form.password"
+          type="password"
           variant="outlined"
           prepend-icon="mdi-lock"
-          :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-          @click:append-inner="showPassword = !showPassword"
+          append-inner-icon="mdi-eye"
           required
           autocomplete="current-password"
         />
-        <v-btn block color="primary" type="submit" class="mt-4" size="large">
+        <v-btn block color="primary" type="submit" size="large">
           <v-icon start>mdi-login</v-icon>
           Ingresar
         </v-btn>
-      </v-form>
+      </form>
     </v-card>
   </v-container>
 </template>

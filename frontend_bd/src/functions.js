@@ -1,5 +1,31 @@
 import axios from 'axios'
 
+export async function login(usuario) {
+  const formData = new URLSearchParams()
+  formData.append('username', usuario.username)
+  formData.append('password', usuario.password)
+
+  try {
+    const response = await axios.post(`http://localhost:9090/api/login`, formData.toString(), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    })
+
+    if (response.data.success === true) {
+      localStorage.setItem('isLoggedIn', 'true')
+      return true
+    } else {
+      alert(response.data.error || 'Error al iniciar sesión')
+      return false
+    }
+  } catch (err) {
+    console.error('Error al loguearse:', err.response?.data || err.message)
+    alert('❌ Error al iniciar sesión')
+    return false
+  }
+}
+
 //PACIENTE
 export async function getPacientes() {
   try {
