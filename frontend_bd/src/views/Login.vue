@@ -21,29 +21,11 @@ async function handleSubmit() {
   <v-container class="d-flex justify-center align-center login" style="height: 100vh">
     <v-card width="400" elevation="8" class="pa-6 rounded-lg mx-auto">
       <h2 class="text-h5 text-center mb-4">Iniciar Sesión</h2>
-      <form @submit.prevent="handleSubmit">
-        <v-text-field
-          label="Usuario"
-          v-model="form.username"
-          variant="outlined"
-          prepend-icon="mdi-account"
-          required
-          autocomplete="username"
-        />
-        <v-text-field
-          label="Contraseña"
-          v-model="form.password"
-          type="password"
-          variant="outlined"
-          prepend-icon="mdi-lock"
-          append-inner-icon="mdi-eye"
-          required
-          autocomplete="current-password"
-        />
-        <v-btn block color="primary" type="submit" size="large">
-          <v-icon start>mdi-login</v-icon>
-          Ingresar
-        </v-btn>
+      <form @submit.prevent="handleSubmit"  class="text-center">
+        <v-text-field label="Usuario" v-model="form.username" variant="outlined" />
+        <v-text-field label="Contraseña" v-model="form.password" type="password" variant="outlined" />
+
+        <v-btn block color="primary" type="submit">Ingresar</v-btn>
       </form>
     </v-card>
   </v-container>

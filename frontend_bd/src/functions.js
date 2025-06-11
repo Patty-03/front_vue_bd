@@ -1,27 +1,60 @@
 import axios from 'axios'
 
+//*******************LOGIN************************************ */
 export async function login(usuario) {
   const formData = new URLSearchParams()
   formData.append('username', usuario.username)
   formData.append('password', usuario.password)
 
   try {
-    const response = await axios.post(`http://localhost:9090/api/login`, formData.toString(), {
+    const response = await fetch(`http://localhost:9090/api/login`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
-      }
+      },
+      body: formData.toString()
     })
 
-    if (response.data.success === true) {
+    const data = await response.json()
+    if (data.success === true) {
       localStorage.setItem('isLoggedIn', 'true')
       return true
     } else {
-      alert(response.data.error || 'Error al iniciar sesión')
+      alert(data.error || '❌ Credenciales incorrectas')
       return false
     }
   } catch (err) {
-    console.error('Error al loguearse:', err.response?.data || err.message)
+    console.error('Error al iniciar sesión:', err.message)
     alert('❌ Error al iniciar sesión')
+    return false
+  }
+}
+
+export async function register(usuario) {
+  const formData = new URLSearchParams()
+  formData.append('username', usuario.username)
+  formData.append('password', usuario.password)
+
+  try {
+    const response = await fetch(`http://localhost:9090/api/usuarios/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: formData.toString()
+    })
+
+    const data = await response.json()
+    if (data.success === true) {
+      alert('✅ Registro exitoso')
+      return true
+    } else {
+      alert(data.error || '❌ No se pudo registrar')
+      return false
+    }
+  } catch (err) {
+    console.error('Error al registrar:', err.message)
+    alert('❌ Error al registrar')
     return false
   }
 }
