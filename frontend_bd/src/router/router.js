@@ -16,9 +16,11 @@ import PacientesNoAtendidos from '@/components/tables/PacientesNoAtendidos.vue'
 import PacientesPorUnidad from '@/components/tables/PacientesPorUnidad.vue'
 import InformeConsultas from '@/components/tables/InformeConsultas.vue'
 import ResumenProceso from '@/components/tables/ResumenProceso.vue'
+import Login from '@/views/Login.vue'
 
 const routes = [
-  { path: '/', component: Home },
+  { path: '/', component: Login },
+  { path: '/home', component: Home },
   { path: '/pacientes', component: ListadoPacientes },
   { path: '/medicos', component: ListadoMedicos },
   { path: '/unidades', component: ListadoUnidades },

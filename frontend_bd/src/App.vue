@@ -1,12 +1,15 @@
 <script setup>
 import Header from '@/components/Header.vue'
+import { useRoute } from 'vue-router'
+const route = useRoute()
 </script>
 
 <template>
   <v-app class="page-layout">
-    <Header />
-    
-    <v-main>
+    <Header v-if="route.path !== '/'" />
+
+    <!-- Contenido principal -->
+    <v-main :class="{ 'has-header': route.path !== '/' }">
       <v-container fluid>
         <RouterView />
       </v-container>
@@ -21,9 +24,11 @@ import Header from '@/components/Header.vue'
   min-height: 100vh;
 }
 
-/* Ajuste para el contenido debajo del header */
-.v-main {
-  padding-top: 64px; /* Altura del app-bar */
-  min-height: calc(100vh - 64px);
+.v-main.has-header {
+  padding-top: 64px; 
+}
+
+.v-main.has-header .v-container {
+  max-width: 96vw;
 }
 </style>
