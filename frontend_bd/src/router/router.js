@@ -44,4 +44,16 @@ const router = createRouter({
   routes,
 })
 
+router.beforeEach((to, from, next) => {
+  const publicPages = ['/'] // Rutas públicas
+  const authRequired = !publicPages.includes(to.path)
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'
+
+  if (authRequired && !isLoggedIn) {
+    next('/')
+  } else
+    next()
+})
+
+
 export default router

@@ -89,7 +89,7 @@ async function handleSubmit() {
         <v-container>
           <v-row dense>
             <v-col cols="12" sm="6">
-              <v-text-field label="Código del Departamento" v-model.number="cod_Dpto" required: disabled="isEdit"/>
+              <v-text-field label="Código del Departamento" v-model.number="cod_Dpto" required:disabled="isEdit"/>
             </v-col>
             <v-col cols="12" sm="6">
               <v-text-field label="Nombre del Departamento" v-model="nombre_Dpto" required />

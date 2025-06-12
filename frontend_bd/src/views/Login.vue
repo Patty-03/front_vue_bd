@@ -12,6 +12,7 @@ const form = ref({
 async function handleSubmit() {
   const success = await login(form.value)
   if (success) {
+    localStorage.setItem('isLoggedIn', 'true')
     router.push('/home')
   }
 }
