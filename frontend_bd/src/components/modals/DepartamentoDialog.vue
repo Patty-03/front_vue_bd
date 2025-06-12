@@ -46,7 +46,6 @@ function limpiarFormulario() {
 }
 
 async function handleSubmit() {
-  // Validaciones básicas
   if (!cod_Dpto.value || !nombre_Dpto.value.trim()) {
     alert('Completa todos los campos obligatorios')
     return
@@ -54,7 +53,7 @@ async function handleSubmit() {
 
   const datos = {
     cod_Dpto: parseInt(cod_Dpto.value),
-    nombre_Dpto: nombre_Dpto.value.trim(),
+    nombre_Dpto: nombre_Dpto.value,
     cod_Hptal: parseInt(cod_Hptal.value)
   }
 
@@ -63,10 +62,9 @@ async function handleSubmit() {
       await updateDepartamento(datos)
     } else {
       await createDepartamento(datos)
-
     }
 
-    emit('submit')
+    emit('submit', datos) // ✅ Emite los datos también
     emit('update:modelValue', false)
     creationDialog.value = true
   } catch (err) {
@@ -89,13 +87,13 @@ async function handleSubmit() {
         <v-container>
           <v-row dense>
             <v-col cols="12" sm="6">
-              <v-text-field label="Código del Departamento" v-model.number="cod_Dpto" required:disabled="isEdit"/>
+              <v-text-field label="Código del Departamento" v-model.number="cod_Dpto" required :disabled="isEdit"/>
             </v-col>
             <v-col cols="12" sm="6">
               <v-text-field label="Nombre del Departamento" v-model="nombre_Dpto" required />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field label="Código del Hospital" v-model.number="cod_Hptal" required:disabled="isEdit" />
+              <v-text-field label="Código del Hospital" v-model.number="cod_Hptal" required :disabled="isEdit" />
             </v-col>
           </v-row>
         </v-container>
