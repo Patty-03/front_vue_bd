@@ -20,7 +20,7 @@ async function handleSubmit() {
 
 <template>
   <v-container class="d-flex justify-center align-center login" style="height: 100vh">
-    <v-card width="400" elevation="8" class="pa-6 rounded-lg mx-auto">
+    <v-card width="400" elevation="8" class="pa-6 rounded-lg mx-auto" transition="fade-transition">
       <h2 class="text-h5 text-center mb-4">Iniciar Sesión</h2>
       <form @submit.prevent="handleSubmit"  class="text-center">
         <v-text-field label="Usuario" v-model="form.username" variant="outlined" />

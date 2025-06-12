@@ -1,13 +1,23 @@
 <script setup>
+import router from '@/router/router';
 import { useDisplay } from 'vuetify'
 
 const { mobile } = useDisplay()
+
+function logout() {
+  if (confirm('Esta seguro que desea cerrar sesion?')){
+    localStorage.removeItem('isLoggedIn')
+    alert('Sesion cerrada satisfactoriamente')
+    router.push('/')
+  }
+}
+
 </script>
 
 <template>
   <v-app-bar color="primary" app>
     <v-app-bar-nav-icon class="d-flex align-center">
-      <v-icon>mdi-hospital-box</v-icon>
+      <v-btn icon @click="logout"><v-icon title="Cerrar sesion">mdi-hospital-box</v-icon></v-btn>
     </v-app-bar-nav-icon>
 
     <v-toolbar-title>Gestión Hospitalaria</v-toolbar-title>
