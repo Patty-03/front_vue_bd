@@ -1,5 +1,5 @@
 <script setup>
-import { createPaciente, updatePaciente } from '@/functions' // Importa ambas funciones
+import { createPaciente, updatePaciente } from '@/functions' 
 import { defineProps, defineEmits, ref, watch } from 'vue'
 
 const props = defineProps({

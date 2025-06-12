@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps, defineEmits, ref, watch } from 'vue'
-import { createMedico, updateMedico } from '@/functions.js'
+import { createMedico, updateMedico } from '@/functions'
 
 const props = defineProps({
   modelValue: {
@@ -15,7 +15,6 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'submit'])
 
-// Campos reactivos del formulario
 const cod_Med = ref('')
 const nombre_Med = ref('')
 const apellidos = ref('')
@@ -90,25 +89,21 @@ async function handleSubmit() {
     cod_Hptal: parseInt(cod_Hptal.value)
 
   }
-  console.error('Error:', datos.Apellidos)
-
   try {
     let resultado
 
     if (isEdit.value) {
-      await updateMedico( datos)
+      resultado = await updateMedico( datos)
     } else {
-      await createMedico(datos)
+      resultado = await createMedico(datos)
+  
 
-    }
-
-    if (resultado?.success) {
+    if (resultado.success){
       emit('submit')
       emit('update:modelValue', false)
       creationDialog.value = true
-    } else {
-      errorMessage.value = resultado?.error
-    }
+    }  
+  }
   } catch (err) {
     console.error('Error:', err)
     errorMessage.value = err.response?.data?.error || err.message || 'Error desconocido'

@@ -59,7 +59,7 @@ export async function register(usuario) {
   }
 }
 
-//PACIENTE
+//*****************************************PACIENTE
 export async function getPacientes() {
   try {
     const response = await axios.get('http://localhost:9090/api/pacientes/getAll', {
@@ -132,7 +132,7 @@ export async function updatePaciente(historia, paciente) {
   const formData = new URLSearchParams()
   formData.append('nombre_Paciente', paciente.nombre_Paciente)
   formData.append('direccion_Paciente', paciente.direccion_Paciente || '')
-  formData.append('fecha_Nacimiento', paciente.fecha_Nacimiento) // Asegúrate que esté en formato YYYY-MM-DD
+  formData.append('fecha_Nacimiento', paciente.fecha_Nacimiento) 
 
   try {
     const response = await axios.put(
@@ -340,7 +340,7 @@ export async function updateDepartamento(departamento) {
   formData.append('cod_Hptal', departamento.cod_Hptal)
 
 
-  const response = await axios.put(`http://localhost:9090/api/departamentos/update/`, formData.toString(), {
+  const response = await axios.put(`http://localhost:9090/api/departamentos/update`, formData.toString(), {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
@@ -434,13 +434,13 @@ export async function deleteRegistro(params) {
 
 export async function getAllRegistros() {
   try {
-    const response = await axios.get(`http://localhost:9090/api/registros/getAll`, {
+    const response = await axios.get(`http://localhost:9090/api/registro/getAll`, {
       headers: {
         'Content-Type': 'application/json'
       }
     });
     console.log('Respuesta del servidor:', response.data) // Depuración
-    return response.data.registros || []
+    return response.data || []
   } catch (error) {
     console.error('Error al obtener registros:', error.response?.data || error.message)
     return [];
