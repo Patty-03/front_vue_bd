@@ -10,10 +10,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'success'])
-
-// Campos reactivos
-// Campos reactivos
+const emit = defineEmits(['update:modelValue', 'submit', 'success'])
 
 const cod_Unidad = ref('')
 const nombre_Unidad = ref('')
@@ -71,7 +68,7 @@ async function handleSubmit() {
 
     }
 
-    emit('submit') // Emitir evento de éxito
+   emit('submit', datos)
     emit('update:modelValue', false) // Cerrar el diálogo
   } catch (err) {
     console.error(err)

@@ -424,10 +424,21 @@ export async function getAllUnidades() {
 }
 
 //-------------------------------------REGISTRO
-export async function updateRegistro(params) {
-  alert("CODIGO DE MODIFICAR")
-}
+export async function updateRegistro(historia, cod_Unidad, datos) {
+  const formData = new URLSearchParams()
+  formData.append('fue_Atendido', datos.fue_Atendido)
+  formData.append('causa_No_Atendido', datos.causa_No_Atendido || '')
+  formData.append('estado', datos.estado || '')
+  formData.append('fecha_Registro', datos.fecha_Registro || new Date().toISOString().split('T')[0])
 
+  const response = await axios.put(`http://localhost:8080/api/registro/update/${historia}/${cod_Unidad}`, formData.toString(), {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  })
+
+  return response.data
+}
 export async function deleteRegistro(params) {
   alert("CODIGO DE BORRAR")
 }

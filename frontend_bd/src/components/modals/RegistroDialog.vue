@@ -141,7 +141,7 @@ async function handleSubmit() {
               <v-select
                 label="Estado"
                 v-model="estado"
-                :items="['Activo', 'Pendiente', 'Cancelado', 'Completado']"
+                :items="['Estable', 'Crítico', 'En espera', 'Alta']"
                 required
               />
             </v-col>
