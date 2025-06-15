@@ -246,7 +246,12 @@ export async function createMedico(medico) {
   return response.data
 }
 
-//------------------------------HOSPITAL
+//------------------------------HOSPITAL---------------
+export async function getHospitales(params) {
+  
+}
+
+
 export async function getAllHospitals() {
   try {
     const response = await axios.get(`http://localhost:9090/api/hospitales/getAll`, {
@@ -423,7 +428,7 @@ export async function getAllUnidades() {
   }
 }
 
-//-------------------------------------REGISTRO
+//-------------------------------------REGISTRO-------------------------
 export async function updateRegistro(historia, cod_Unidad, datos) {
   const formData = new URLSearchParams()
   formData.append('fue_Atendido', datos.fue_Atendido)
@@ -431,7 +436,7 @@ export async function updateRegistro(historia, cod_Unidad, datos) {
   formData.append('estado', datos.estado || '')
   formData.append('fecha_Registro', datos.fecha_Registro || new Date().toISOString().split('T')[0])
 
-  const response = await axios.put(`http://localhost:8080/api/registro/update/${historia}/${cod_Unidad}`, formData.toString(), {
+  const response = await axios.put(`http://localhost:9090/api/registro/update/${historia}/${cod_Unidad}`, formData.toString(), {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     }

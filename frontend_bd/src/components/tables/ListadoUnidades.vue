@@ -1,15 +1,22 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import UnidadDialog from '@/components/modals/UnidadDialog.vue'
 import { getAllUnidades, deleteUnidad } from '@/functions.js'
 import InformeDialog from '../modals/InformeDialog.vue'
 
 // Datos reactivos
 const data = ref([])
-const dialogVisible = ref(false) // Cambiado de openCreateDialog a dialogVisible para mayor claridad
+const dialogVisible = ref(false)
 const selectedUnidad = ref(null)
-const successDialog = ref(false) // Diálogo de éxito
+const successDialog = ref(false)
 const informeDialogVisible = ref(false)
+
+// Filtros
+const hospitales = ref([])
+const departamentos = ref([])
+
+const selectedHospital = ref('')
+const selectedDepartamento = ref('')
 
 // Encabezados de la tabla
 const headers = ref([
@@ -30,8 +37,11 @@ async function cargarDatos() {
     cod_Dpto: u.cod_Dpto,
     cod_Hptal: u.cod_Hptal
   }))
-}
 
+  // Cargar opciones para filtros
+  hospitales.value = [...new Set(data.value.map(d => d.cod_Hptal))]
+  departamentos.value = [...new Set(data.value.map(d => d.cod_Dpto))]
+}
 
 function abrirModalAgregar() {
   selectedUnidad.value = null
@@ -39,7 +49,7 @@ function abrirModalAgregar() {
 }
 
 function editarUnidad(unidad) {
-  selectedUnidad.value = {...unidad} // Copiamos el objeto para evitar mutaciones
+  selectedUnidad.value = {...unidad}
   dialogVisible.value = true
 }
 
@@ -57,17 +67,20 @@ async function eliminarUnidad(cod_Hptal, cod_Dpto, cod_Unidad) {
   }
 }
 
-
-function onSuccess() {
-  dialogVisible.value = false
-  successDialog.value = true
-  cargarDatos()
-}
-
 function generarInforme(unidad) {
-  selectedUnidad.value = {...unidad} // Copiamos para evitar mutaciones
+  selectedUnidad.value = {...unidad}
   informeDialogVisible.value = true
 }
+
+// Filtrar datos dinámicamente
+const filteredData = computed(() => {
+  return data.value.filter(item => {
+    let match = true
+    if (selectedHospital.value) match &&= item.cod_Hptal === selectedHospital.value
+    if (selectedDepartamento.value) match &&= item.cod_Dpto === selectedDepartamento.value
+    return match
+  })
+})
 
 onMounted(() => {
   cargarDatos()
@@ -82,43 +95,67 @@ onMounted(() => {
     </v-btn>
   </v-container>
 
-  <h2 v-if="data.length == 0">No hay contenido para mostrar</h2>
+  <!-- FILTROS -->
+  <v-container fluid class="mt-4">
+    <v-row dense>
+      <v-col cols="12" sm="6">
+        <v-select
+          v-model="selectedHospital"
+          :items="hospitales"
+          label="Filtrar por Hospital"
+          clearable
+          hide-details
+        />
+      </v-col>
+      <v-col cols="12" sm="6">
+        <v-select
+          v-model="selectedDepartamento"
+          :items="departamentos"
+          label="Filtrar por Departamento"
+          clearable
+          hide-details
+        />
+      </v-col>
+    </v-row>
+  </v-container>
+
+  <h2 v-if="filteredData.length == 0">No hay unidades con esos filtros</h2>
   <v-container fluid width="80vw" v-else>
     <v-table fixed-header height="400px">
       <thead>
-      <tr>
-        <th v-for="header in headers" :key="header">{{ header }}</th>
-      </tr>
+        <tr>
+          <th v-for="header in headers" :key="header">{{ header }}</th>
+        </tr>
       </thead>
       <tbody>
-      <tr v-for="(item, idx) in data" :key="idx">
-        <td>{{ item.cod_Unidad }}</td>
-        <td>{{ item.nombre_Unidad }}</td>
-        <td>{{ item.ubicacion_Hptal }}</td>
-        <td>{{ item.cod_Dpto }}</td>
-        <td>{{ item.cod_Hptal }}</td>
-        <td class="d-flex justify-start" style="gap: 8px;">
-          <v-btn icon size="x-small" color="primary" title="Editar" @click="editarUnidad(item)">
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
-          <v-btn icon size="x-small" color="red" title="Eliminar"
-                 @click="eliminarUnidad(item.cod_Hptal,item.cod_Dpto,item.cod_Unidad)">
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-          <v-btn color="warning" icon size="x-small" title="Generar informe" @click="generarInforme(item)">
-            <v-icon>mdi-clipboard-text</v-icon>
-          </v-btn>
-        </td>
-      </tr>
+        <tr v-for="(item, idx) in filteredData" :key="idx">
+          <td>{{ item.cod_Unidad }}</td>
+          <td>{{ item.nombre_Unidad }}</td>
+          <td>{{ item.ubicacion_Hptal }}</td>
+          <td>{{ item.cod_Dpto }}</td>
+          <td>{{ item.cod_Hptal }}</td>
+          <td class="d-flex justify-start" style="gap: 8px;">
+            <v-btn icon size="x-small" color="primary" title="Editar" @click="editarUnidad(item)">
+              <v-icon>mdi-pencil</v-icon>
+            </v-btn>
+            <v-btn icon size="x-small" color="red" title="Eliminar"
+                   @click="eliminarUnidad(item.cod_Hptal,item.cod_Dpto,item.cod_Unidad)">
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+            <v-btn color="warning" icon size="x-small" title="Generar informe" @click="generarInforme(item)">
+              <v-icon>mdi-clipboard-text</v-icon>
+            </v-btn>
+          </td>
+        </tr>
       </tbody>
     </v-table>
   </v-container>
 
   <!-- Modal para agregar/editar -->
   <UnidadDialog
-      v-model="dialogVisible"
-      :unidad="selectedUnidad"
-      @success="onSuccess"
+    v-model="dialogVisible"
+    :unidad="selectedUnidad"
+    @success="onSuccess"
   />
 
   <!-- Diálogo de éxito -->
@@ -132,9 +169,9 @@ onMounted(() => {
   </v-dialog>
 
   <InformeDialog
-      v-model="informeDialogVisible"
-      :unidad="selectedUnidad"
-      @submit="cargarDatos"
+    v-model="informeDialogVisible"
+    :unidad="selectedUnidad"
+    @submit="cargarDatos"
   />
 </template>
 
@@ -142,7 +179,6 @@ onMounted(() => {
 .v-table {
   max-width: 100vw;
 }
-
 .no-wrap {
   white-space: nowrap;
 }
